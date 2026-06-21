@@ -2,11 +2,11 @@
     <div class="modal-overlay">
         <div x-data="{}" x-init="dragModal($el)" class="modal-dialog" wire:ignore.self>            
             <div class="modal-content">
-                <div class="cardPrin" style="cursor: move;">
-                    <div class="cardPrin-header">
+                <div class="card" style="cursor: move;">
+                    <div class="card-header">
                         <span>{{ $selected_id ? 'Editar Usuario' : 'Crear Usuario' }}</span>
                     </div>
-                    <div class="cardPrin-body" style="padding: 10px; max-height: 400px; overflow-y: auto;">
+                    <div class="card-body" style="padding: 10px; max-height: 400px; overflow-y: auto;">
                         <form>
                             <div class="row g-1">
                                 @if ($selected_id)<input type="hidden" wire:model="selected_id">@endif
@@ -56,7 +56,7 @@
                             </div>
                         </form>
                     </div>
-                    <div class="cardPrin-footer mt-3 d-flex justify-content-end gap-2">
+                    <div class="card-footer mt-3 d-flex justify-content-end gap-2">
                         <a wire:click.prevent="cancel()" class="bot botNegro">Cerrar</a>
                         <a wire:click.prevent="save()" class="bot botVerde">Guardar</a>
                     </div>

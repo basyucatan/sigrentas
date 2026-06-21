@@ -276,4 +276,29 @@ class Util
 
         return $l>0.5?'#000':'#fff';
     }
+    public static function getLonLat($id, $tabla) {
+        $registroFila = DB::table($tabla)->where('id', $id)->first();
+        if (!$registroFila || empty($registroFila->gmaps)) return null;
+        $urlGmaps = $registroFila->gmaps;
+        if (str_contains($urlGmaps, 'goo.gl') || str_contains($urlGmaps, 'maps.google')) {
+            $cabeceras = @get_headers($urlGmaps, 1);
+            if (isset($cabeceras['Location'])) {
+                $urlGmaps = is_array($cabeceras['Location']) ? end($cabeceras['Location']) : $cabeceras['Location'];
+            }
+        }
+        $coordenadas = null;
+        $patrones = [
+            '/@(-?\d+\.\d+),(-?\d+\.\d+)/',
+            '/q=(-?\d+\.\d+),(-?\d+\.\d+)/',
+            '/query=(-?\d+\.\d+),(-?\d+\.\d+)/',
+            '/place\/(-?\d+\.\d+),(-?\d+\.\d+)/'
+        ];
+        foreach ($patrones as $patron) {
+            if (preg_match($patron, $urlGmaps, $coincidencias)) {
+                $coordenadas = $coincidencias[1] . ',' . $coincidencias[2];
+                break;
+            }
+        }
+        return $coordenadas;
+    }
 }

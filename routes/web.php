@@ -24,5 +24,7 @@ Route::middleware("auth")->group(function () {
 
     Route::view('catalogos', 'livewire.catalogos.index');
     
-    Route::view('clases', 'livewire.clases.index');
+    Route::view('arbolcasas', 'livewire.arbolcasas.index');
+    Route::view('cuartos', 'livewire.cuartos.index');
+    Route::view('casas', 'livewire.casas.index');
 });

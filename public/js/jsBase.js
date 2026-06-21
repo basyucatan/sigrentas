@@ -1,28 +1,39 @@
 function dragModal(modal) {
-    if (!modal) return;
     const encabezado = modal.querySelector('.cardPrin-header');
     if (!encabezado) return;
-    let estaArrastrando = false;
-    let desplazamientoX = 0;
-    let desplazamientoY = 0;
-    encabezado.addEventListener('mousedown', function (e) {
-        estaArrastrando = true;
-        const rectangulo = modal.getBoundingClientRect();
-        desplazamientoX = e.clientX - rectangulo.left;
-        desplazamientoY = e.clientY - rectangulo.top;
-        modal.style.position = 'fixed';
-        modal.style.left = rectangulo.left + 'px';
-        modal.style.top = rectangulo.top + 'px';
-        modal.style.margin = '0';
+    let offset = { x: 0, y: 0 };
+    const mover = (e) => {
+        modal.style.left = `${e.clientX - offset.x}px`;
+        modal.style.top = `${e.clientY - offset.y}px`;
+    };
+    encabezado.addEventListener('mousedown', (e) => {
+        const rect = modal.getBoundingClientRect();
+        offset = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        Object.assign(modal.style, { position: 'fixed', left: `${rect.left}px`, top: `${rect.top}px`, margin: '0' });
+        document.addEventListener('mousemove', mover);
         document.body.style.userSelect = 'none';
     });
-    document.addEventListener('mousemove', function (e) {
-        if (!estaArrastrando) return;
-        modal.style.left = (e.clientX - desplazamientoX) + 'px';
-        modal.style.top = (e.clientY - desplazamientoY) + 'px';
-    });
-    document.addEventListener('mouseup', function () {
-        estaArrastrando = false;
+    document.addEventListener('mouseup', () => {
+        document.removeEventListener('mousemove', mover);
         document.body.style.userSelect = '';
     });
 }
+//Sweet alert
+document.addEventListener('livewire:init', () => {
+    Livewire.on('sweetalert', (data) => {
+        if (Array.isArray(data) && data.length === 1 && typeof data[0] === 'object') {
+            data = data[0];
+        }
+        Swal.fire({
+            icon: data.icon ?? 'success',
+            title: data.text ?? '',
+            showConfirmButton: false,
+            timer: data.timer ?? 10000,
+            timerProgressBar: true,
+            target: document.body,
+            customClass: {
+                container: 'modalSweet'
+            }
+        });
+    });
+});

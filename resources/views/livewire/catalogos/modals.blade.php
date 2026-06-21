@@ -2,9 +2,9 @@
     <div class="modal-overlay"> 
         <div x-data="{}" x-init="dragModal($el)" class="modal-dialog" style="width: 80%;">
             <div class="modal-content">
-                <div class="cardPrin" style="overflow-y: auto; height: 60vh; min-height: 200px;">
-                    <div class="cardPrin-header">{{ $selected_id ? 'Editar' : 'Crear' }}</div>
-                    <div class="cardPrin-body">
+                <div class="card" style="overflow-y: auto; height: 60vh; min-height: 200px;">
+                    <div class="card-header">{{ $selected_id ? 'Editar' : 'Crear' }}</div>
+                    <div class="card-body">
                         @foreach($campos as $key => $valor)
                             <div style="margin-bottom: 15px;">
                                 <label class="etiBase"> 
@@ -15,7 +15,7 @@
                             </div>
                         @endforeach
                     </div>
-                    <div class="cardPrin-footer">
+                    <div class="card-footer">
                         <button wire:click="cancel" class="bot botNegro">Cancelar</button>
                         <button wire:click="save" class="bot botVerde">Guardar</button>
                     </div>
