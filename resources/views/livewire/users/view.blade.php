@@ -2,8 +2,8 @@
 <div class="container-fluid p-0">
     <div class="row g-0 justify-content-center">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="cardPrin">
+                <div class="cardPrin-header">
                     <span>Users</span>
                     <div>
                         <input wire:model.live="keyWord" type="text" class="inpSolo" placeholder="Buscar">
@@ -12,7 +12,7 @@
                         <i class="bi bi-file-earmark-plus"></i>
                     </button>
                 </div>
-                <div class="card-body">
+                <div class="cardPrin-body">
                     @include('livewire.users.modals')
                     <table class="table tabBase">
                         <thead>

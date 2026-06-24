@@ -18,7 +18,9 @@
 
         <div class="flex-grow-1 d-flex align-items-center justify-content-between">
             <span class="fw-bold text-dark">{{ $texto }}
-                <span class="badge bg-secondary ms-2" style="font-size: 0.65rem;">{{ count($hijos) }}</span>
+                <span class="badge bg-secondary ms-2" style="font-size: 0.65rem;">
+    {{ $nodo['adicionales']['noCuartos'] ?? 0 }}
+</span>
             </span>
             <div class="d-flex gap-2">
                 <button class="bot botVerde botChico" wire:click="generarCuartos({{ $nodo['id'] }})">⚙️</button>

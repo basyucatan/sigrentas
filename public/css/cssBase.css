@@ -213,8 +213,8 @@ html, body {
 }
 
 @media(max-width: 767.98px) {
-    .tabBase.ch td, .tabBase.ch th {
-        font-size: 11px !important;
+    .arbol1, .arbol2, .tabBase.ch td, .tabBase.ch th {
+        font-size: 16px !important;
         padding: 2px 1px;
     }
 }

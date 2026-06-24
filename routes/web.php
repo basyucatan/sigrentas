@@ -25,6 +25,17 @@ Route::middleware("auth")->group(function () {
     Route::view('catalogos', 'livewire.catalogos.index');
     
     Route::view('arbolcasas', 'livewire.arbolcasas.index');
-    Route::view('cuartos', 'livewire.cuartos.index');
+    Route::view('control', 'livewire.control.index');
+
     Route::view('casas', 'livewire.casas.index');
+    Route::view('cuartos', 'livewire.cuartos.index');
+    Route::view('inquilinos', 'livewire.inquilinos.index');
+    Route::view('vehiculos', 'livewire.vehiculos.index');
+    Route::view('tecnicos', 'livewire.tecnicos.index');
+    Route::view('asignacions', 'livewire.asignacions.index');
+    Route::view('prioridads', 'livewire.prioridads.index');
+    Route::view('fallas', 'livewire.fallas.index');
+    Route::view('contratos', 'livewire.contratos.index');
+    Route::view('evidencias', 'livewire.evidencias.index');
+    Route::view('control', 'livewire.control.index');
 });
