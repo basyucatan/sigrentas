@@ -98,7 +98,7 @@ public function edit($id)
     public function resetInput()
     {
         $this->verModalTicket = true;
-        $this->resetExcept(['keyWord','casas', 'cuartos', 'tipos', 
+        $this->resetExcept(['keyWord','casas', 'cuartos', 'tipos', 'tecnicos', 
             'fallas','lEstatus','prioridads']);
     }
 

@@ -21,23 +21,19 @@ public function getAniejaAttribute()
 {
     $inicio = Carbon::parse($this->fechaSol, 'America/Mexico_City');
     $ahora = now('America/Mexico_City');
-
     $totalHoras = $inicio->diffInHours($ahora);
     $dias = intdiv($totalHoras, 24);
     $horas = $totalHoras % 24;
-
     $diasTolerancia = $this->prioridad->diasTolerancia ?? 0;
     $colorHex = $this->prioridad->colorHex ?? '6C757D';
-
-    $colorEstado = $dias > $diasTolerancia ? 'danger' : 'success';
-
+    $fechaLimite = $inicio->copy()->addDays($diasTolerancia);
+    $colorEstado = $ahora->gt($fechaLimite) ? 'danger' : 'success';
     $r = hexdec(substr($colorHex, 0, 2));
     $g = hexdec(substr($colorHex, 2, 2));
     $b = hexdec(substr($colorHex, 4, 2));
-
     $luminancia = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
     return [
-        'texto' => $dias . 'd' . $horas . 'h',
+        'texto' => $dias . 'D ' . $horas . 'H',
         'color' => $colorEstado,
         'dias' => $dias,
         'horas' => $horas,
