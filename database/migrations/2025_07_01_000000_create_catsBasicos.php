@@ -24,12 +24,25 @@ return new class extends Migration
             $table->enum('estatus', ['disponible', 'ocupado', 'mantenimiento'])->default('disponible');
             $table->json('adicionales')->nullable();
         });
+        Schema::create('invMuebles', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('IdCuarto')->constrained('cuartos')->cascadeOnDelete();
+            $table->string('mueble',50);
+            $table->enum('estatus', ['bueno', 'dañado', 'perdido','falta'])->default('bueno');
+            $table->json('adicionales')->nullable();
+        });
         Schema::create('inquilinos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('IdUser')->constrained('users')->restrictOnDelete();
             $table->string('inquilino', 200);
             $table->string('telefono', 10);
-            $table->boolean('activo')->default(true);
+            $table->text('generales')->nullable();
+            $table->json('adicionales')->nullable();
+        });
+        Schema::create('propietarios', function (Blueprint $table) {
+            $table->id();
+            $table->string('propietario', 200);
+            $table->text('generales')->nullable();
             $table->json('adicionales')->nullable();
         });
         Schema::create('vehiculos', function (Blueprint $table) {

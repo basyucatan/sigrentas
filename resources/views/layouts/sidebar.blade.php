@@ -52,6 +52,7 @@
                                     <li><a href="{{ url('/inquilinos') }}" class="nav-link small">👥 Inquilinos</a></li>
                                     <li><a href="{{ url('/asignacions') }}" class="nav-link small">📋 Asignaciones</a></li>
                                     <li><a href="{{ url('/contratos') }}" class="nav-link small">📄 Contratos</a></li>
+                                    <li><a href="{{ url('/contrato') }}" class="nav-link small">📄 Firma</a></li>
                                     <li><a href="{{ url('/evidencias') }}" class="nav-link small">📷 Evidencias</a></li>
                                     <li><a href="{{ url('/ticketssegs') }}" class="nav-link small">🎫 Seguimiento Tickets</a></li>
                                 </ul>

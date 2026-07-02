@@ -4,44 +4,42 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Inquilino;
+use App\Models\Propietario;
 use Livewire\Attributes\Computed;
 use App\Models\{Util};
 use Illuminate\Support\Facades\DB;
 
-class Inquilinos extends Component
+class Propietarios extends Component
 {
     use WithPagination;
 	protected $paginationTheme = 'bootstrap';
-    public $verModalInquilino=false, $selected_id, $keyWord, $IdUser, $inquilino, $telefono, $generales;
+    public $verModalPropietario=false, $selected_id, $keyWord, $propietario, $generales;
 	
 	public $adicionales = [];
     public function mount(){}
     public function updatedKeyWord(){$this->resetPage();}
     #[Computed]
-	public function filteredInquilinos()
+	public function filteredPropietarios()
 	{
 		$keyWord = '%' . $this->keyWord . '%';
-		return Inquilino::Where('id','>',0)
+		return Propietario::Where('id','>',0)
 			->where(function ($query) use ($keyWord) {
 				$query
-						->orWhere('IdUser', 'LIKE', $keyWord)
-						->orWhere('inquilino', 'LIKE', $keyWord)
-						->orWhere('telefono', 'LIKE', $keyWord)
+						->orWhere('propietario', 'LIKE', $keyWord)
 						->orWhere('generales', 'LIKE', $keyWord);
 			})
 			->paginate(12);
 	}
 	public function render()
 	{
-		return view('livewire.inquilinos.view', [
-			'inquilinos' => $this->filteredInquilinos,
+		return view('livewire.propietarios.view', [
+			'propietarios' => $this->filteredPropietarios,
 		]);
 	}
     public function cancel()
     {
         $this->resetInput();
-        $this->verModalInquilino = false;
+        $this->verModalPropietario = false;
     }
     public function resetInput()
     {
@@ -50,33 +48,29 @@ class Inquilinos extends Component
     public function edit($id)
     {
         $this->selected_id = $id;
-		$this->fill(Inquilino::findOrFail($id)->toArray());
-        $this->verModalInquilino = true;
+		$this->fill(Propietario::findOrFail($id)->toArray());
+        $this->verModalPropietario = true;
     }
     public function create()
     {
         $this->resetInput();
-        $this->verModalInquilino = true;
+        $this->verModalPropietario = true;
     }    
     public function save()
     {
         $this->validate([
-		'IdUser' => 'required',
-		'inquilino' => 'required',
-		'telefono' => 'required',
+		'propietario' => 'required',
         ]);
 
-        Inquilino::updateOrCreate(
+        Propietario::updateOrCreate(
 			['id' => $this->selected_id],
 			[
-				'IdUser' => $this-> IdUser,
-				'inquilino' => $this-> inquilino,
-				'telefono' => $this-> telefono,
+				'propietario' => $this-> propietario,
 				'generales' => $this-> generales
 			]
 		);
         $this->resetInput();
-        $this->verModalInquilino = false;
+        $this->verModalPropietario = false;
     }
     public function paginationView()
     {
@@ -85,7 +79,7 @@ class Inquilinos extends Component
     public function destroy($id)
     {
         if ($id) {
-            Inquilino::where('id', $id)->delete();
+            Propietario::where('id', $id)->delete();
         }
     }
 }

@@ -1,10 +1,10 @@
-@section('title', __('Inquilinos'))
+@section('title', __('Propietarios'))
 <div class="container-fluid p-0">
     <div class="row g-0 justify-content-center">
         <div class="col-12">
             <div class="cardPrin">
                 <div class="cardPrin-header" style="cursor: move;">
-                    <span>Inquilinos</span>
+                    <span>Propietarios</span>
                     <div class="me-2 position-relative" style="display:inline-block;">
                         <input wire:model.lazy="keyWord" class="inpSolo" 
                         wire:keydown.escape="$set('keyWord','')"
@@ -18,33 +18,29 @@
                         @endif
                     </div>
                     <div>
-                        <button class="bot botVerde" wire:click="create" title="Nuevo Inquilino">
+                        <button class="bot botVerde" wire:click="create" title="Nuevo Propietario">
                             <i class="bi bi-file-earmark-plus"></i>
                         </button>                   
                     </div>                
                 </div>
                 <div class="cardPrin-body">    
                     <div class="d-flex justify-content-end mb-2">
-                        {{ $inquilinos->links() }}
+                        {{ $propietarios->links() }}
                     </div>                               
-                    @include('livewire.inquilinos.modals')
+                    @include('livewire.propietarios.modals')
                     <div class="tablaCont">
                         <table class="table tabBase ch">
                             <thead>
                                 <tr>
-								<th>Iduser</th>
-								<th>Inquilino</th>
-								<th>Telefono</th>
+								<th>Propietario</th>
 								<th>Generales</th>
 <th>Acciones</th></tr>
                             </thead>
                             <tbody>
-                                @forelse($inquilinos as $row)
+                                @forelse($propietarios as $row)
                                     <tr>
                                         
-								<td>{{ $row->IdUser }}</td>
-								<td>{{ $row->inquilino }}</td>
-								<td>{{ $row->telefono }}</td>
+								<td>{{ $row->propietario }}</td>
 								<td>{{ $row->generales }}</td>
 
                                         <td width="60">

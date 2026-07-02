@@ -4,44 +4,43 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Inquilino;
+use App\Models\Recibo;
 use Livewire\Attributes\Computed;
 use App\Models\{Util};
 use Illuminate\Support\Facades\DB;
 
-class Inquilinos extends Component
+class Recibos extends Component
 {
     use WithPagination;
 	protected $paginationTheme = 'bootstrap';
-    public $verModalInquilino=false, $selected_id, $keyWord, $IdUser, $inquilino, $telefono, $generales;
+    public $verModalRecibo=false, $selected_id, $keyWord, $IdContrato, $montoRenta, $fechaVence;
 	
 	public $adicionales = [];
     public function mount(){}
     public function updatedKeyWord(){$this->resetPage();}
     #[Computed]
-	public function filteredInquilinos()
+	public function filteredRecibos()
 	{
 		$keyWord = '%' . $this->keyWord . '%';
-		return Inquilino::Where('id','>',0)
+		return Recibo::Where('id','>',0)
 			->where(function ($query) use ($keyWord) {
 				$query
-						->orWhere('IdUser', 'LIKE', $keyWord)
-						->orWhere('inquilino', 'LIKE', $keyWord)
-						->orWhere('telefono', 'LIKE', $keyWord)
-						->orWhere('generales', 'LIKE', $keyWord);
+						->orWhere('IdContrato', 'LIKE', $keyWord)
+						->orWhere('montoRenta', 'LIKE', $keyWord)
+						->orWhere('fechaVence', 'LIKE', $keyWord);
 			})
 			->paginate(12);
 	}
 	public function render()
 	{
-		return view('livewire.inquilinos.view', [
-			'inquilinos' => $this->filteredInquilinos,
+		return view('livewire.recibos.view', [
+			'recibos' => $this->filteredRecibos,
 		]);
 	}
     public function cancel()
     {
         $this->resetInput();
-        $this->verModalInquilino = false;
+        $this->verModalRecibo = false;
     }
     public function resetInput()
     {
@@ -50,33 +49,32 @@ class Inquilinos extends Component
     public function edit($id)
     {
         $this->selected_id = $id;
-		$this->fill(Inquilino::findOrFail($id)->toArray());
-        $this->verModalInquilino = true;
+		$this->fill(Recibo::findOrFail($id)->toArray());
+        $this->verModalRecibo = true;
     }
     public function create()
     {
         $this->resetInput();
-        $this->verModalInquilino = true;
+        $this->verModalRecibo = true;
     }    
     public function save()
     {
         $this->validate([
-		'IdUser' => 'required',
-		'inquilino' => 'required',
-		'telefono' => 'required',
+		'IdContrato' => 'required',
+		'montoRenta' => 'required',
+		'fechaVence' => 'required',
         ]);
 
-        Inquilino::updateOrCreate(
+        Recibo::updateOrCreate(
 			['id' => $this->selected_id],
 			[
-				'IdUser' => $this-> IdUser,
-				'inquilino' => $this-> inquilino,
-				'telefono' => $this-> telefono,
-				'generales' => $this-> generales
+				'IdContrato' => $this-> IdContrato,
+				'montoRenta' => $this-> montoRenta,
+				'fechaVence' => $this-> fechaVence
 			]
 		);
         $this->resetInput();
-        $this->verModalInquilino = false;
+        $this->verModalRecibo = false;
     }
     public function paginationView()
     {
@@ -85,7 +83,7 @@ class Inquilinos extends Component
     public function destroy($id)
     {
         if ($id) {
-            Inquilino::where('id', $id)->delete();
+            Recibo::where('id', $id)->delete();
         }
     }
 }

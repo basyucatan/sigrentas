@@ -9,39 +9,60 @@ use Carbon\Carbon;
 class Ticket extends Model
 {
 	use HasFactory;
-	
-    public $timestamps = false;
-
+    public $timestamps = true;
     protected $table = 'tickets';
-
     protected $fillable = ['IdCuarto','IdFalla','IdAutor','IdTecnico','IdPrioridad','tipo','estatus',
-        'ticket','fechaSol','fechaFin','adicionales'];
+        'ticket','fechaSol','fechaPro','fechaFin','adicionales'];
     protected $casts = ['adicionales' => 'array'];
-public function getAniejaAttribute()
+public function getFechaLimiteAttribute()
 {
-    $inicio = Carbon::parse($this->fechaSol, 'America/Mexico_City');
+    $fechaEntrega = Carbon::parse($this->fechaPro, 'America/Mexico_City');
+    if ($fechaEntrega->hour < 14) {
+        return $fechaEntrega->copy()->subDay()->setTime(23, 59, 59);
+    }
+    return $fechaEntrega->copy()->setTime(11, 0, 0);
+}
+public function getEstatusEntregaAttribute()
+{
     $ahora = now('America/Mexico_City');
-    $totalHoras = $inicio->diffInHours($ahora);
-    $dias = intdiv($totalHoras, 24);
-    $horas = $totalHoras % 24;
-    $diasTolerancia = $this->prioridad->diasTolerancia ?? 0;
-    $colorHex = $this->prioridad->colorHex ?? '6C757D';
-    $fechaLimite = $inicio->copy()->addDays($diasTolerancia);
-    $colorEstado = $ahora->gt($fechaLimite) ? 'danger' : 'success';
-    $r = hexdec(substr($colorHex, 0, 2));
-    $g = hexdec(substr($colorHex, 2, 2));
-    $b = hexdec(substr($colorHex, 4, 2));
-    $luminancia = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+    $limite = $this->fechaLimite;
+    $color = 'success';
+    $xd = $ahora->diffInDays($limite);
+    if ($ahora->gt($limite)) {
+        $color = 'danger';
+    } elseif ($ahora->diffInDays($limite) < 2) {
+        $color = 'warning';
+    }
     return [
-        'texto' => $dias . 'D ' . $horas . 'H',
-        'color' => $colorEstado,
-        'dias' => $dias,
-        'horas' => $horas,
-        'colorPrioridadFondo' => '#' . $colorHex,
-        'colorPrioridadTexto' => $luminancia > 128 ? '#000000' : '#FFFFFF'
+        'vencido' => $ahora->gt($limite),
+        'diferenciaForHumans' => $ahora->diffForHumans($limite),
+        'color' => $color
     ];
 }
-
+    public function getAniejaAttribute()
+    {
+        $inicio = Carbon::parse($this->fechaSol, 'America/Mexico_City');
+        $ahora = now('America/Mexico_City');
+        $totalHoras = $inicio->diffInHours($ahora);
+        $dias = intdiv($totalHoras, 24);
+        $horas = $totalHoras % 24;
+        $diasTolerancia = $this->prioridad->diasTolerancia ?? 0;
+        $colorHex = $this->prioridad->colorHex ?? '6C757D';
+        $fechaLimite = $inicio->copy()->addDays($diasTolerancia);
+        $colorEstado = $ahora->gt($fechaLimite) ? 'danger' : 'success';
+        $r = hexdec(substr($colorHex, 0, 2));
+        $g = hexdec(substr($colorHex, 2, 2));
+        $b = hexdec(substr($colorHex, 4, 2));
+        $luminancia = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+        return [
+            'texto' => $dias . 'D ' . $horas . 'H',
+            'color' => $colorEstado,
+            'dias' => $dias,
+            'horas' => $horas,
+            'colorPrioridadFondo' => '#' . $colorHex,
+            'colorPrioridadTexto' => $luminancia > 128 ? '#000000' : '#FFFFFF'
+        ];
+    }
     public function cuarto(){return $this->hasOne('App\Models\Cuarto', 'id', 'IdCuarto');}
     public function evidencias(){return $this->hasMany('App\Models\Evidencia', 'IdTicket', 'id');}
     public function falla(){return $this->hasOne('App\Models\Falla', 'id', 'IdFalla');}
@@ -49,5 +70,4 @@ public function getAniejaAttribute()
     public function tecnico(){return $this->hasOne('App\Models\Tecnico', 'id', 'IdTecnico');}
     public function ticketssegs(){return $this->hasMany('App\Models\Ticketsseg', 'IdTicket', 'id');}
     public function user(){return $this->hasOne('App\Models\User', 'id', 'IdAutor');}
-    
 }

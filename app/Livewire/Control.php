@@ -3,7 +3,7 @@ namespace App\Livewire;
 use App\Models\{Ticket, Util, Tecnico, Cuarto};
 use Livewire\Component;
 use Livewire\WithPagination;
-
+use Livewire\Attributes\Computed;
 class Control extends Component
 {
     use WithPagination;
@@ -24,7 +24,6 @@ class Control extends Component
         $this->prioridads = Util::getArray('prioridads');
         // $this->tecnicos = Tecnico::pluck('tecnico', 'id')->toArray();
     }
-
 public function updatedIdCasa($id)
 {
     $this->IdCuarto = null; 
@@ -61,12 +60,12 @@ public function save()
             'IdPrioridad'   => $this->IdPrioridad,
             'IdTecnico'   => $this->IdTecnico,
             'estatus'     => $this->estatus,
+            'fechaPro'    => $this->selected_id ? Ticket::find($this->selected_id)->fechaSol 
+                : now()->tz('America/Mexico_City')->format('Y-m-d\TH:i'),
             'fechaSol'    => $this->selected_id ? Ticket::find($this->selected_id)->fechaSol 
                 : now()->tz('America/Mexico_City')->format('Y-m-d\TH:i'),
         ]
     );
-
-    // 3. Limpieza y cierre
     $this->cancelar();
 }
     public function crearTicket()
@@ -101,13 +100,50 @@ public function edit($id)
         $this->resetExcept(['keyWord','casas', 'cuartos', 'tipos', 'tecnicos', 
             'fallas','lEstatus','prioridads']);
     }
+public function updatingIdCasaFiltro() { $this->resetPage(); }
+public function updatingEstatusFiltro() { $this->resetPage(); }
+public function updatingPrioridadFiltro() { $this->resetPage(); }
+public function updatingIdTecnicoFiltro() { $this->resetPage(); }
+public function updatingKeyWord() { $this->resetPage(); }
+#[Computed]
+public function getTicketsProperty()
+{
+    $query = Ticket::with(['cuarto.casa', 'tecnico']);
 
+    if (!empty($this->keyWord)) {
+        $text = '%' . $this->keyWord . '%';
+        $query->where(function ($q) use ($text) {
+            $q->where('ticket', 'LIKE', $text)
+                ->orWhere('id', $this->keyWord)
+                ->orWhere('estatus', 'LIKE', $text)
+                ->orWhereHas('cuarto.casa', fn($sub) => $sub->where('casa', 'LIKE', $text))
+                ->orWhereHas('falla', fn($sub) => $sub->where('falla', 'LIKE', $text))
+                ->orWhereHas('tecnico', fn($sub) => $sub->where('tecnico', 'LIKE', $text));
+        });
+    }
+
+    if (!empty($this->IdCasaFiltro)) {
+        $query->whereHas('cuarto', fn($q) => $q->where('IdCasa', $this->IdCasaFiltro));
+    }
+
+    if (!empty($this->estatusFiltro)) {
+        $query->where('estatus', $this->estatusFiltro);
+    }
+
+    if (!empty($this->prioridadFiltro)) {
+        $query->where('IdPrioridad', $this->prioridadFiltro);
+    }
+
+    if (!empty($this->IdTecnicoFiltro)) {
+        $query->where('IdTecnico', $this->IdTecnicoFiltro);
+    }
+
+    return $query->latest()->paginate(10);
+}
     public function render()
     {
-        $tickets = Ticket::with(['cuarto.casa', 'tecnico'])
-            ->when($this->keyWord, fn($q) => $q->where('ticket', 'like', "%{$this->keyWord}%"))
-            ->latest()
-            ->paginate(10);
-        return view('livewire.control.view', compact('tickets'));
+        return view('livewire.control.view', [
+            'tickets' => $this->tickets
+        ]);
     }
 }

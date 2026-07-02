@@ -177,84 +177,45 @@ class Util
         }
         return $coleccion->keyBy('id')->toArray();
     }
-
-    public static function guardarArchivo($file, $nombreBase, $carpeta)
+    public static function guardarArchivo($archivo, $nombreBase, $carpeta, $esBase64 = false)
     {
-        if (!$file || !$carpeta) return null;
-        $extImagen = ['jpg','jpeg','png','webp'];
-        $ext = strtolower($file->extension());
-        return in_array($ext, $extImagen)
-            ? self::guardarFoto($file, $nombreBase, $carpeta)
-            : self::guardarDocumento($file, $nombreBase, $carpeta);
-    }
-
-    public static function guardarDocumento($file, $nombreBase, $carpeta)
-    {
-        $base = Str::slug(pathinfo($nombreBase, PATHINFO_FILENAME));
-        $ext  = $file->extension();
-        if (strlen($base) > 96) {
-            $base = substr($base, 0, 96) . '-' . Str::random(4);
+        if (!$archivo || !$carpeta) return null;
+        // 1. Normalizar entrada: convertir base64 a archivo si es necesario
+        if ($esBase64) {
+            $datos = base64_decode(preg_replace('/^data:image\/\w+;base64,/', '', $archivo));
+            $rutaTemp = storage_path('app/tmp/' . Str::random(10) . '.png');
+            if (!is_dir(dirname($rutaTemp))) mkdir(dirname($rutaTemp), 0755, true);
+            file_put_contents($rutaTemp, $datos);
+            $archivo = new \Illuminate\Http\File($rutaTemp);
         }
-        $nombreArchivo = $base . '.' . $ext;
-        Storage::putFileAs("public/{$carpeta}", $file, $nombreArchivo);
+        // 2. Preparar nombre y extensión
+        $base = Str::slug(pathinfo($nombreBase, PATHINFO_FILENAME));
+        if (strlen($base) > 96) $base = substr($base, 0, 96) . '-' . Str::random(4);
+        $nombreArchivo = $base . '.' . ($esBase64 ? 'png' : $archivo->extension());
+        // 3. Procesar si es imagen
+        $esImagen = in_array(strtolower($archivo->extension()), ['jpg', 'jpeg', 'png', 'webp']);
+        if ($esImagen) {
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($archivo->getRealPath());
+            $maxSide = 1000;
+            // Lógica de redimensionamiento
+            $image->scaleDown(width: $maxSide, height: $maxSide);
+            // Guardado optimizado por calidad
+            $rutaFinal = storage_path('app/tmp/' . $nombreArchivo);
+            foreach ([90, 70, 50] as $q) {
+                $image->save($rutaFinal, $q);
+                if (filesize($rutaFinal) <= 500 * 1024) break;
+            }
+            Storage::putFileAs("public/{$carpeta}", new \Illuminate\Http\File($rutaFinal), $nombreArchivo);
+            @unlink($rutaFinal);
+        } else {
+            // 4. Guardado directo para documentos
+            Storage::putFileAs("public/{$carpeta}", $archivo, $nombreArchivo);
+        }
+        // Limpieza de temporal si se creó uno
+        if ($esBase64) @unlink($archivo->getRealPath());
         return $nombreArchivo;
     }
-    
-    public static function borrarArchivo($carpeta, $nombreArchivo)
-    {
-        if (!$nombreArchivo || !$carpeta) return false;
-        $ruta = "public/{$carpeta}/{$nombreArchivo}";
-        if (Storage::exists($ruta)) {
-            Storage::delete($ruta);
-        }
-        return true;
-    }
-    public static function guardarFoto($file, $nombreBase, $carpeta)
-    {
-        if (!$file || !$carpeta) return null;
-        $base = Str::slug(pathinfo($nombreBase, PATHINFO_FILENAME));
-        $ext  = $file->extension();                                   
-        if (strlen($base) > 96) {
-            $base = substr($base, 0, 96) . '-' . Str::random(4);  //maximo 100 caracteres
-        }
-        $nombreFoto = $base . '.' . $ext;
-        $dirTmp = storage_path('app/tmp');
-        if (!is_dir($dirTmp) && !@mkdir($dirTmp, 0755, true)) {
-            return null; // no se puede crear tmp
-        }
-        $rutaTemp = $dirTmp . DIRECTORY_SEPARATOR . $nombreFoto;
-        $manager = new ImageManager(new Driver());
-        $image = $manager->read($file->getRealPath());
-        $origW = $image->width(); 
-        $origH = $image->height();
-        $maxSide = 1000;
-        if ($origW <= $maxSide && $origH <= $maxSide) {
-            $targetW = $origW; $targetH = $origH;
-        } elseif ($origW >= $origH) {
-            $targetW = $maxSide;
-            $targetH = (int) round($origH * ($targetW / $origW));
-        } else {
-            $targetH = $maxSide;
-            $targetW = (int) round($origW * ($targetH / $origH));
-        }
-        $image->resize($targetW, $targetH, function ($c) { $c->upsize(); });
-        $maxBytes = 500 * 1024;
-        $qualities = [90,80,70,60,50,40,30];
-        foreach ($qualities as $q) {
-            @unlink($rutaTemp);              // eliminar temp previo si existe
-            $image->save($rutaTemp, $q);     // guardar intento
-            clearstatcache(true, $rutaTemp);
-
-            if (file_exists($rutaTemp) && filesize($rutaTemp) <= $maxBytes) break;
-        }
-        try {
-            Storage::putFileAs("public/{$carpeta}", new \Illuminate\Http\File($rutaTemp), $nombreFoto);
-        } finally {
-            @unlink($rutaTemp);
-        }
-        return $nombreFoto;
-    }
-
     public static function colorTexto($rgba)
     {
         if (!preg_match('/rgba?\((\d+),\s*(\d+),\s*(\d+)/', $rgba, $m)) {return '#000000';}

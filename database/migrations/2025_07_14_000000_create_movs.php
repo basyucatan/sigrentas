@@ -7,15 +7,6 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('contratos', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('IdCuarto')->constrained('cuartos')->restrictOnDelete();
-            $table->foreignId('IdInquilino')->constrained('inquilinos')->restrictOnDelete();
-            $table->date('fechaIni');
-            $table->date('fechaFin'); 
-            $table->string('docContrato');
-            $table->boolean('activo')->default(true);
-        });
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('IdCuarto')->constrained('cuartos')->restrictOnDelete();
@@ -27,6 +18,7 @@ return new class extends Migration
             $table->enum('estatus', ['pendiente', 'proceso', 'terminado', 'cancelado'])->default('pendiente');
             $table->text('ticket');
             $table->dateTime('fechaSol');
+            $table->dateTime('fechaPro');
             $table->dateTime('fechaFin')->nullable();
             $table->json('adicionales')->nullable();
             $table->timestamps();
@@ -43,6 +35,35 @@ return new class extends Migration
             $table->foreignId('IdUser')->constrained('users');
             $table->text('comentario');
             $table->timestamps();
+        });
+        Schema::create('contratos', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('IdCuarto')->constrained('cuartos')->restrictOnDelete();
+            $table->foreignId('IdInquilino')->constrained('inquilinos')->restrictOnDelete();
+            $table->foreignId('IdPropietario')->constrained('propietarios')->restrictOnDelete();
+            $table->date('fechaIni');
+            $table->date('fechaFin'); 
+            $table->decimal('montoRenta',10,2);
+            $table->decimal('deposito',10,2);
+            $table->decimal('penaEntrega',10,2);
+            $table->string('docContrato', 100);
+            $table->string('docInvMuebles', 100);
+            $table->string('firma', 100);
+            $table->json('adicionales')->nullable();
+        });
+        Schema::create('recibos', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('IdContrato')->constrained('contratos')->cascadeOnDelete();
+            $table->decimal('montoRenta',10,2);
+            $table->date('fechaVence');
+            $table->json('adicionales')->nullable();
+        });
+        Schema::create('pagos', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('IdRecibo')->constrained('recibos')->cascadeOnDelete();
+            $table->decimal('montoPago',10,2);
+            $table->date('fecha');
+            $table->json('adicionales')->nullable();
         });
     }
 

@@ -13,7 +13,7 @@ class Inquilino extends Model
 
     protected $table = 'inquilinos';
 
-    protected $fillable = ['IdUser','inquilino','telefono','activo','adicionales'];
+    protected $fillable = ['IdUser','inquilino','telefono','generales','adicionales'];
     protected $casts = [
         'adicionales' => 'array'
     ];

@@ -31,13 +31,10 @@ return new class extends Migration
         DB::table('deptos')->insert([
             ['id' => 1, 'depto' => 'Compras'],
             ['id' => 2, 'depto' => 'AlmacenMP'],
-            ['id' => 3, 'depto' => 'Retales'],
-            ['id' => 4, 'depto' => 'Corte'],
-            ['id' => 5, 'depto' => 'Ensamble'],
-            ['id' => 6, 'depto' => 'AlmacénPT'],
-            ['id' => 7, 'depto' => 'Instalación'],
-            ['id' => 8, 'depto' => 'Entregas'],
-            ['id' => 9, 'depto' => 'Administración'],
+            ['id' => 3, 'depto' => 'Mantenimiento'],
+            ['id' => 4, 'depto' => 'Entregas'],
+            ['id' => 5, 'depto' => 'Administración'],
+            ['id' => 6, 'depto' => 'Inquilinos'],
         ]);
     }    
     public function down(): void
