@@ -1,6 +1,12 @@
 @extends('layouts.app')
 @section('title', __('Contrato'))
 @section('content')
+<style>
+#canvas {
+    border: 1px solid #ccc;
+    touch-action: none;
+}
+</style>
 <div class="container-fluid">
     <p>Firmar a continuación:</p>
     <canvas id="canvas"></canvas>

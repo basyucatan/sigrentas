@@ -18,36 +18,38 @@ document.addEventListener("DOMContentLoaded", () => {
         contexto.fillStyle = colorFondo;
         contexto.clearRect(0, 0, $canvas.width, $canvas.height);
     };
-    $canvas.addEventListener("mousedown", evento => {
-        xAnterior = xActual;
-        yAnterior = yActual;
-        xActual = obtenerXReal(evento.clientX);
-        yActual = obtenerYReal(evento.clientY);
-        contexto.beginPath();
-        contexto.fillStyle = colorPincel;
-        contexto.clearRect(xActual, yActual, grosor, grosor);
-        contexto.closePath();
-        haComenzadoDibujo = true;
+$canvas.addEventListener("pointerdown", evento => {
+    evento.preventDefault();
+    xActual = obtenerXReal(evento.clientX);
+    yActual = obtenerYReal(evento.clientY);
+    haComenzadoDibujo = true;
+});
+
+$canvas.addEventListener("pointermove", evento => {
+    if (!haComenzadoDibujo) return;
+
+    evento.preventDefault();
+
+    xAnterior = xActual;
+    yAnterior = yActual;
+
+    xActual = obtenerXReal(evento.clientX);
+    yActual = obtenerYReal(evento.clientY);
+
+    contexto.beginPath();
+    contexto.moveTo(xAnterior, yAnterior);
+    contexto.lineTo(xActual, yActual);
+    contexto.strokeStyle = colorPincel;
+    contexto.lineWidth = grosor;
+    contexto.stroke();
+    contexto.closePath();
+});
+
+["pointerup", "pointerleave", "pointercancel"].forEach(evento => {
+    $canvas.addEventListener(evento, () => {
+        haComenzadoDibujo = false;
     });
-    $canvas.addEventListener("mousemove", (evento) => {
-        if (!haComenzadoDibujo) return;
-        xAnterior = xActual;
-        yAnterior = yActual;
-        xActual = obtenerXReal(evento.clientX);
-        yActual = obtenerYReal(evento.clientY);
-        contexto.beginPath();
-        contexto.moveTo(xAnterior, yAnterior);
-        contexto.lineTo(xActual, yActual);
-        contexto.strokeStyle = colorPincel;
-        contexto.lineWidth = grosor;
-        contexto.stroke();
-        contexto.closePath();
-    });
-    ["mouseup", "mouseout"].forEach(nombreDeEvento => {
-        $canvas.addEventListener(nombreDeEvento, () => {
-            haComenzadoDibujo = false;
-        });
-    });
+});
     limpiarCanvas();
     $btnLimpiar.onclick = limpiarCanvas;
     $btnDescargar.onclick = () => {
