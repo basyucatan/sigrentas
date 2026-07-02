@@ -3,6 +3,9 @@
 @section('content')
 <style>
 #canvas {
+    display: block;
+    width: 100%;
+    height: 300px;
     border: 1px solid #ccc;
     touch-action: none;
 }

@@ -50,6 +50,16 @@ $canvas.addEventListener("pointermove", evento => {
         haComenzadoDibujo = false;
     });
 });
+const ajustarCanvas = () => {
+    $canvas.width = $canvas.clientWidth;
+    $canvas.height = $canvas.clientHeight;
+    limpiarCanvas();
+};
+
+ajustarCanvas();
+
+window.addEventListener("resize", ajustarCanvas);
+
     limpiarCanvas();
     $btnLimpiar.onclick = limpiarCanvas;
     $btnDescargar.onclick = () => {
