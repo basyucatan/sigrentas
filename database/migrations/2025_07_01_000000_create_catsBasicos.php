@@ -33,7 +33,7 @@ return new class extends Migration
         });
         Schema::create('inquilinos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('IdUser')->constrained('users')->restrictOnDelete();
+            $table->foreignId('IdUser')->constrained('users')->restrictOnDelete()->default(6);
             $table->string('inquilino', 200);
             $table->string('telefono', 10);
             $table->text('generales')->nullable();

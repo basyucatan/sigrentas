@@ -14,7 +14,6 @@ class Casas extends Component
     use WithPagination;
 	protected $paginationTheme = 'bootstrap';
     public $verModalCasa=false, $selected_id, $keyWord, $casa, $direccion, $gmaps;
-	
 	public $adicionales = [];
     public function mount(){}
     public function updatedKeyWord(){$this->resetPage();}
@@ -64,13 +63,13 @@ class Casas extends Component
 		'direccion' => 'required',
 		'gmaps' => 'required',
         ]);
-
         Casa::updateOrCreate(
 			['id' => $this->selected_id],
 			[
 				'casa' => $this-> casa,
 				'direccion' => $this-> direccion,
-				'gmaps' => $this-> gmaps
+				'gmaps' => $this-> gmaps,
+				'adicionales' => $this->adicionales,
 			]
 		);
         $this->resetInput();

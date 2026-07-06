@@ -7,20 +7,12 @@
                         <span>{{ $selected_id ? 'Editar Contrato' : 'Crear Contrato' }}</span>
                     </div>
                     <div class="cardPrin-body" style="padding: 10px; max-height: 400px; overflow-y: auto;">
-                        <form gy-2>
-                            <div class="row">
+                        <form>
+                            <div class="row gx-1 gy-1">
                                 @if ($selected_id)
                                     <input type="hidden" wire:model="selected_id">
                                 @endif
-                                <div class="col-md-6">
-                                    <label class="etiBase">Firma</label>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <input wire:model="firma" type="text" class="inpBase" readonly>
-                                        <button type="button" 
-                                            wire:click="$dispatch('abrirFirmaModal', {modelId: {{ $selected_id ?? 0 }}, modelo: 'Contrato', campo: 'firma', carpeta: 'contratos'})" 
-                                            class="bot botAzul botChico">Firmar</button>
-                                    </div>
-                                </div>
+
                                 <div class="col-md-6">
                                     <label class="etiBase">Idcuarto</label>
                                     <input wire:model="IdCuarto" type="text" class="inpBase" onfocus="this.select()">
@@ -46,14 +38,14 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="etiBase">Fechaini</label>
-                                    <input wire:model="fechaIni" type="text" class="inpBase" onfocus="this.select()">
+                                    <input wire:model="fechaIni" type="date" class="inpBase" onfocus="this.select()">
                                     @error('fechaIni')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label class="etiBase">Fechafin</label>
-                                    <input wire:model="fechaFin" type="text" class="inpBase" onfocus="this.select()">
+                                    <input wire:model="fechaFin" type="date" class="inpBase" onfocus="this.select()">
                                     @error('fechaFin')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
@@ -81,30 +73,6 @@
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="etiBase">Doccontrato</label>
-                                    <input wire:model="docContrato" type="text" class="inpBase"
-                                        onfocus="this.select()">
-                                    @error('docContrato')
-                                        <span class="error text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="etiBase">Docinvmuebles</label>
-                                    <input wire:model="docInvMuebles" type="text" class="inpBase"
-                                        onfocus="this.select()">
-                                    @error('docInvMuebles')
-                                        <span class="error text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="etiBase">Firma</label>
-                                    <input wire:model="firma" type="text" class="inpBase" onfocus="this.select()">
-                                    @error('firma')
-                                        <span class="error text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
                             </div>
                         </form>
                     </div>

@@ -61,7 +61,6 @@ class Inquilinos extends Component
     public function save()
     {
         $this->validate([
-		'IdUser' => 'required',
 		'inquilino' => 'required',
 		'telefono' => 'required',
         ]);
@@ -69,7 +68,7 @@ class Inquilinos extends Component
         Inquilino::updateOrCreate(
 			['id' => $this->selected_id],
 			[
-				'IdUser' => $this-> IdUser,
+				'IdUser' => $this-> IdUser ?? 6,
 				'inquilino' => $this-> inquilino,
 				'telefono' => $this-> telefono,
 				'generales' => $this-> generales

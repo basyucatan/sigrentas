@@ -1,33 +1,47 @@
-@if($verModalCasa)
+@if ($verModalCasa)
     <div class="modal-overlay">
-        <div x-data="{}" x-init="dragModal($el)" class="modal-dialog" wire:ignore.self>            
+        <div x-data="{}" x-init="dragModal($el)" class="modal-dialog" wire:ignore.self>
             <div class="modal-content">
                 <div class="cardPrin">
                     <div class="cardPrin-header" style="cursor: move;">
                         <span>{{ $selected_id ? 'Editar Casa' : 'Crear Casa' }}</span>
                     </div>
                     <div class="cardPrin-body" style="padding: 10px; max-height: 400px; overflow-y: auto;">
-                        <form gy-2>
-                            <div class="row">
+                        <form>
+                            <div class="row gy-1">
                                 @if ($selected_id)
                                     <input type="hidden" wire:model="selected_id">
                                 @endif
 
-<div class="col-md-6">
-    <label class="etiBase">Casa</label>
-    <input wire:model="casa" type="text" class="inpBase" onfocus="this.select()">
-    @error('casa') <span class="error text-danger">{{ $message }}</span> @enderror
-</div>
-<div class="col-md-6">
-    <label class="etiBase">Direccion</label>
-    <input wire:model="direccion" type="text" class="inpBase" onfocus="this.select()">
-    @error('direccion') <span class="error text-danger">{{ $message }}</span> @enderror
-</div>
-<div class="col-md-6">
-    <label class="etiBase">Gmaps</label>
-    <input wire:model="gmaps" type="text" class="inpBase" onfocus="this.select()">
-    @error('gmaps') <span class="error text-danger">{{ $message }}</span> @enderror
-</div>
+                                <div class="col-md-6">
+                                    <label class="etiBase">Casa</label>
+                                    <input wire:model="casa" type="text" class="inpBase" onfocus="this.select()">
+                                    @error('casa')
+                                        <span class="error text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="etiBase">Direccion</label>
+                                    <input wire:model="direccion" type="text" class="inpBase"
+                                        onfocus="this.select()">
+                                    @error('direccion')
+                                        <span class="error text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="etiBase">Gmaps</label>
+                                    <input wire:model="gmaps" type="text" class="inpBase" onfocus="this.select()">
+                                    @error('gmaps')
+                                        <span class="error text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="etiBase">Descripción</label>
+                                    <textarea wire:model="adicionales.descripcion" class="inpBase"></textarea>
+                                    @error('adicionales.descripcion')
+                                        <span class="error text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
 
                             </div>
                         </form>

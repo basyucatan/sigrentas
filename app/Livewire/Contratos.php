@@ -1,22 +1,32 @@
 <?php
 
 namespace App\Livewire;
+
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Contrato;
 use Livewire\Attributes\Computed;
 use App\Models\{Util};
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 class Contratos extends Component
 {
     use WithPagination;
 	protected $paginationTheme = 'bootstrap';
-    public $verModalContrato=false, $selected_id, $keyWord, $IdCuarto, $IdInquilino,
-		$IdPropietario, $fechaIni, $fechaFin, $montoRenta, $deposito, $penaEntrega, 
-		$docContrato, $docInvMuebles, $firma;
+    public $verModalContrato=false, $selected_id, $keyWord, $IdCuarto, $IdInquilino, $IdPropietario, $fechaIni, $fechaFin, $montoRenta, $deposito, $penaEntrega, $docContrato, $docInvMuebles, $firma;
+	
 	public $adicionales = [];
-	protected $listeners = ['firmaActualizada' => '$refresh'];
-    public function mount(){}
+    public function imprimir($id)
+    {
+        $contrato = contrato::with(['cuarto','cuarto.casa','propietario','inquilino'])->findOrFail($id);
+		// dd($contrato);
+        $pdf = Pdf::loadView('livewire.contratos.contratoPDF', [
+            'contrato' => $contrato,
+        ]);
+        $pdf->setPaper('letter', 'portrait');
+        return response()->streamDownload(fn() => print($pdf->output()), "contrato.pdf", ['Content-Type' => 'application/pdf']);
+    }
+	public function mount(){}
     public function updatedKeyWord(){$this->resetPage();}
     #[Computed]
 	public function filteredContratos()
@@ -25,8 +35,17 @@ class Contratos extends Component
 		return Contrato::Where('id','>',0)
 			->where(function ($query) use ($keyWord) {
 				$query
+						->orWhere('IdCuarto', 'LIKE', $keyWord)
+						->orWhere('IdInquilino', 'LIKE', $keyWord)
+						->orWhere('IdPropietario', 'LIKE', $keyWord)
+						->orWhere('fechaIni', 'LIKE', $keyWord)
+						->orWhere('fechaFin', 'LIKE', $keyWord)
 						->orWhere('montoRenta', 'LIKE', $keyWord)
-						->orWhere('deposito', 'LIKE', $keyWord);
+						->orWhere('deposito', 'LIKE', $keyWord)
+						->orWhere('penaEntrega', 'LIKE', $keyWord)
+						->orWhere('docContrato', 'LIKE', $keyWord)
+						->orWhere('docInvMuebles', 'LIKE', $keyWord)
+						->orWhere('firma', 'LIKE', $keyWord);
 			})
 			->paginate(12);
 	}
@@ -67,9 +86,6 @@ class Contratos extends Component
 		'montoRenta' => 'required',
 		'deposito' => 'required',
 		'penaEntrega' => 'required',
-		'docContrato' => 'required',
-		'docInvMuebles' => 'required',
-		'firma' => 'required',
         ]);
 
         Contrato::updateOrCreate(

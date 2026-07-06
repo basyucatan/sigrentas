@@ -46,9 +46,9 @@ return new class extends Migration
             $table->decimal('montoRenta',10,2);
             $table->decimal('deposito',10,2);
             $table->decimal('penaEntrega',10,2);
-            $table->string('docContrato', 100);
-            $table->string('docInvMuebles', 100);
-            $table->string('firma', 100);
+            $table->string('docContrato', 100)->nullable();
+            $table->string('docInvMuebles', 100)->nullable();
+            $table->string('firma', 100)->nullable();
             $table->json('adicionales')->nullable();
         });
         Schema::create('recibos', function (Blueprint $table) {

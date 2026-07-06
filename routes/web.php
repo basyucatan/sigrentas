@@ -30,6 +30,7 @@ Route::middleware("auth")->group(function () {
     Route::view('casas', 'livewire.casas.index');
     Route::view('cuartos', 'livewire.cuartos.index');
     Route::view('inquilinos', 'livewire.inquilinos.index');
+    Route::view('propietarios', 'livewire.propietarios.index');
     Route::view('vehiculos', 'livewire.vehiculos.index');
     Route::view('tecnicos', 'livewire.tecnicos.index');
     Route::view('asignacions', 'livewire.asignacions.index');

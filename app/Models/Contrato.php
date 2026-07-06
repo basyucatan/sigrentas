@@ -13,8 +13,7 @@ class Contrato extends Model
 
     protected $table = 'contratos';
 
-    protected $fillable = ['IdCuarto','IdInquilino','IdPropietario','fechaIni','fechaFin',
-        'montoRenta','deposito','penaEntrega','docContrato','docInvMuebles','firma','adicionales'];
+    protected $fillable = ['IdCuarto','IdInquilino','IdPropietario','fechaIni','fechaFin','montoRenta','deposito','penaEntrega','docContrato','docInvMuebles','firma','adicionales'];
     protected $casts = [
         'adicionales' => 'array'
     ];

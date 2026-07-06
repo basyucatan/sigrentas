@@ -30,46 +30,37 @@
                         <table class="table tabBase ch">
                             <thead>
                                 <tr>
-                                    <th>Idcuarto</th>
-                                    <th>Idinquilino</th>
-                                    <th>Idpropietario</th>
-                                    <th>Fechaini</th>
-                                    <th>Fechafin</th>
-                                    <th>Montorenta</th>
+                                    <th>Casa|Cuarto</th>
+                                    <th>Inquilino</th>
+                                    <th>Propietario</th>
+                                    <th>Fecha Ini</th>
+                                    <th>Fecha Fin</th>
+                                    <th>Monto</th>
                                     <th>Deposito</th>
-                                    <th>Penaentrega</th>
-                                    <th>Doccontrato</th>
-                                    <th>Docinvmuebles</th>
-                                    <th>Firma</th>
+                                    <th>Pena</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($contratos as $row)
                                     <tr>
-                                        <td>{{ $row->IdCuarto }}</td>
-                                        <td>{{ $row->IdInquilino }}</td>
-                                        <td>{{ $row->IdPropietario }}</td>
+                                        <td>{{ $row->Cuarto->casa->casa }}
+                                            <span class="badge bg-primary">{{ $row->Cuarto->cuarto }}</span>
+                                        </td>
+                                        <td>{{ $row->Inquilino->inquilino }}</td>
+                                        <td>{{ $row->Propietario->propietario }}</td>
                                         <td>{{ $row->fechaIni }}</td>
                                         <td>{{ $row->fechaFin }}</td>
                                         <td>{{ $row->montoRenta }}</td>
                                         <td>{{ $row->deposito }}</td>
                                         <td>{{ $row->penaEntrega }}</td>
-                                        <td>{{ $row->docContrato }}</td>
-                                        <td>{{ $row->docInvMuebles }}</td>
-                                        <td>
-                                            @if($row->firma)
-                                                <img src="{{ asset('storage/contratos/'.$row->firma) }}" width="50" class="img-thumbnail">
-                                            @else
-                                                <button type="button" 
-                                                    wire:click="$dispatch('abrirFirmaModal', {modelId: {{ $row->id }}, modelo: 'Contrato', campo: 'firma', carpeta: 'contratos'})"
-                                                    class="bot botAzul botChico">
-                                                    Firmar
-                                                </button>
-                                            @endif
-                                        </td>
-                                        <td width="60">
+                                        <td width="120">
                                             <div class="d-flex justify-content-around align-items-center gap-1">
+                                                <button class="bot botAzul botChico" wire:click="imprimir({{ $row->id }})" 
+                                                    wire:loading.attr="disabled" wire:target="imprimir" title="Print Invoice">
+                                                    <span wire:loading.remove wire:target="imprimir"><i class="bi bi-printer"></i></span>
+                                                    <span wire:loading wire:target="imprimir">⏳</span>
+                                                </button>
                                                 <button wire:click="edit({{ $row->id }})"
                                                     class="bot botNaranja botChico" title="Editar">
                                                     <i class="bi-pencil-square"></i>
@@ -83,15 +74,12 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr><td colspan="12">No hay registros</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            {{-- Componente de firma colocado al final --}}
-            <livewire:firma />
         </div>
     </div>
 </div>

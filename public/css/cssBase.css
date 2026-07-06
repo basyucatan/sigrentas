@@ -27,6 +27,12 @@ html, body {
     overflow: hidden;
     box-shadow: var(--cardSombra);
 }
+.cardPrin-body, .cardSec-body {
+    min-height: 10%;
+    max-height: 75vh;
+    overflow-y: auto;
+    padding: 5px;
+}
 .cardPrin-header {
     display: flex;
     align-items: center;

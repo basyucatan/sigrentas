@@ -21,7 +21,6 @@
                                     <label class="etiBase">No. de Cuartos</label>
                                     <input wire:model="adicionales.noCuartos" type="number" class="inpBase">
                                 </div>
-                                {{-- gmaps ahora es una propiedad directa --}}
                                 <div class="col-md-6">
                                     <label class="etiBase">URL Google Maps</label>
                                     <input wire:model="gmaps" type="text" class="inpBase">
