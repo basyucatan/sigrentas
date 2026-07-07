@@ -444,7 +444,7 @@
         <span class="parrafoCenter resaltar">
             ____________________________________________
         </span><br>
-        {!! evaluar($contrato->propietario?->propietario, 'propietario') !!}
+        {!! evaluar($contrato->propietario?->propietario, 'propietario') !!}<br><br>
     </div>
     <div class="parrafoCenter resaltar">
         “LA PARTE OCUPANTE”<br><br>
