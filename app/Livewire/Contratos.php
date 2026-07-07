@@ -19,7 +19,6 @@ class Contratos extends Component
     public function imprimir($id)
     {
         $contrato = contrato::with(['cuarto','cuarto.casa','propietario','inquilino'])->findOrFail($id);
-		// dd($contrato);
         $pdf = Pdf::loadView('livewire.contratos.contratoPDF', [
             'contrato' => $contrato,
         ]);
