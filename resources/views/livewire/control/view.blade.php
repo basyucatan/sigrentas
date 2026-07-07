@@ -10,6 +10,9 @@
 
     <div class="cardPrin-body overflow-auto flex-grow-1" style="font-size: 1.2rem;">
         @include('livewire.control.modals')
+        <div class="d-flex justify-content-end mb-2">
+            {{ $tickets->links() }}
+        </div>
         <div class="row g-2 mb-1">
             <div class="col-6 col-md-2">
                 <select wire:model.live="IdCasaFiltro" class="form-select inpSolo">
@@ -115,9 +118,6 @@
                     </div>
                 </div>
             @endforeach
-        </div>
-        <div class="mt-3">
-            {{ $tickets->links() }}
         </div>
     </div>
 </div>

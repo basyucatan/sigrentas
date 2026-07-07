@@ -18,18 +18,17 @@
         }
         switch ($formato) {
             case 'dinero':
-                $convertidor = new NumeroALetras();
-                $texto = $convertidor->toMoney($valor, 2, 'PESOS', 'CENTAVOS');
+                $texto = number_format((float)$valor, 2);
                 break;
-            case 'numero':
+            case 'numeroALetras':
                 static $convertidor;
                 $convertidor ??= new NumeroALetras();
                 $texto = $convertidor->toWords($valor);
                 break;
-            case 'fecha':
+            case 'fechaALetras':
                 $texto = Util::formatFecha($valor, 'Texto');
                 break;
-            case 'dia':
+            case 'diaALetras':
                 static $convertidor;
                 $convertidor ??= new NumeroALetras();
                 $texto = $convertidor->toWords(\Carbon\Carbon::parse($valor)->day);
@@ -64,46 +63,43 @@
         <span class="resaltar">PRIMERA</span>.- Declara 
         {!! evaluar($contrato->propietario?->propietario, 'propietario') !!}, 
         que el predio en cuestión es de su legítima propiedad, en pleno dominio y posesión, y que se ubica en
-        {!! evaluar($contrato->cuarto?->casa?->direccion, 'direccion') !!}
-        la Calle sesenta y cinco letra “B” número quinientos diecinueve de la localidad y municipio 
-        de Mérida, Yucatán, descrito de la manera siguiente: 
-        {!! evaluar($contrato->cuarto?->casa?->adicionales['descripcion'], 'descripcion', false) !!}
-    </div>
-    <div class="parrafo">
-        <span class="resaltar">SEGUNDA.- "LA  PARTE PROPIETARIA”</span>, manifiesta que en el bien inmueble descrito 
+        {!! evaluar($contrato->cuarto?->casa?->direccion, 'direccion') !!}, descrito de la manera siguiente: 
+        {!! evaluar($contrato->cuarto?->casa?->adicionales['descripcion'], 'descripcion', false) !!} 
+        <span class="resaltar">"LA  PARTE PROPIETARIA”</span>, manifiesta que el bien inmueble descrito 
         y deslindado en el párrafo anterior, se encuentra físicamente dividido en varios departamentos 
         y el departamento objeto del presente convenio, se denomina convencionalmente como
         <span class="resaltar2">
-            "DEPARTAMENTO {!! evaluar($contrato->cuarto?->cuarto, '# DEPTO', false, 'numero') !!}". 
+            "DEPARTAMENTO {!! evaluar($contrato->cuarto?->cuarto, '# DEPTO', false, 'numeroALetras') !!}". 
         </span>
-        <span>{{ relleno(40) }}</span>
     </div>
     <div class="parrafo">
-        SEGUNDA.- “LA PARTE OCUPANTE” reconoce y declara expresamente que ocupa el inmueble descrito y 
-        deslindado en el apartado que antecede sin título jurídico alguno, por lo que se obliga y 
-        compromete a restituirlo y entregarlo totalmente desocupado a favor de “LA PARTE PROPIETARIA” 
-        dentro de un plazo a partir del día
+        <span class="resaltar">SEGUNDA.- “LA PARTE OCUPANTE”</span> reconoce y declara expresamente que 
+        ocupa el inmueble descrito y deslindado en el apartado que antecede sin título jurídico alguno, 
+        por lo que se obliga y compromete a restituirlo y entregarlo totalmente desocupado a favor de 
+        <span class="resaltar">“LA PARTE PROPIETARIA”</span> dentro de un plazo a partir del día
         <span class="resaltar2">
-            {!! evaluar($contrato->fechaIni, 'fecha inicial', false, 'fecha') !!}, 
+            {!! evaluar($contrato->fechaIni, 'fecha inicial', false, 'fechaALetras') !!}, 
         </span>
         el cual concluirá, sin necesidad de requerimiento previo, el día 
         <span class="resaltar2">
-            {!! evaluar($contrato->fechaFin, 'fecha final', false, 'fecha') !!}, 
+            {!! evaluar($contrato->fechaFin, 'fecha final', false, 'fechaALetras') !!}, 
         </span>
         pudiendo dicho plazo ser prorrogado únicamente mediante acuerdo expreso y por escrito entre las partes. 
         <span>{{ relleno(40) }}</span> 
     </div>
     <div class="parrafo">
         Durante la vigencia del presente convenio, “LA PARTE OCUPANTE” se obliga a pagar a favor de 
-        “LA PARTE PROPIETARIA”, por concepto de renta u ocupación del inmueble, la cantidad de 
+        “LA PARTE PROPIETARIA”, por concepto de <span class="resaltar">renta u ocupación del inmueble,</span> 
+        la cantidad de 
         <span class="resaltar2">
-            ${!! evaluar($contrato->montoRenta, 'monto renta') !!}, (
-            {!! evaluar($contrato->montoRenta, 'monto renta',false,'dinero') !!} 00/100 MONEDA NACIONAL) 
+            ${!! evaluar($contrato->montoRenta, 'monto renta',false, 'dinero') !!}, (
+            {!! evaluar($contrato->montoRenta, 'monto renta',false, 'numeroALetras') !!} PESOS 
+            00/100 MONEDA NACIONAL) 
         </span>
         de manera mensual, misma que deberá ser cubierta 
         <span class="resaltar2">
             puntualmente el día 
-            {!! evaluar($contrato->fechaIni, 'fecha inicial', true, 'dia') !!} de cada mes, 
+            {!! evaluar($contrato->fechaIni, 'fecha inicial', true, 'diaALetras') !!} de cada mes, 
         </span>
         durante todo el tiempo que permanezca vigente el presente convenio, 
         <span class="resaltar">
@@ -136,8 +132,9 @@
         manera anticipada,</span> es decir, antes del vencimiento del plazo pactado, acepta 
         expresamente que la cantidad de 
         <span class="resaltar">
-            ${!! evaluar($contrato->deposito, 'Depósito') !!}, (
-            {!! evaluar($contrato->deposito, 'Depósito',false,'dinero') !!} 00/100 MONEDA NACIONAL) 
+            ${!! evaluar($contrato->deposito, 'Depósito',false,'dinero') !!}, (
+            {!! evaluar($contrato->deposito, 'Depósito',false,'numeroALetras') !!} PESOS 
+            00/100 MONEDA NACIONAL) 
         </span>
         entregada a <span class="resaltar">“LA PARTE PROPIETARIA”</span> por concepto de 
         <span class="resaltar">depósito en garantía,</span> quedará <span class="resaltar">en favor 
@@ -203,8 +200,9 @@
         “LA PARTE OCUPANTE”</span> pagará a <span class="resaltar">“LA PARTE PROPIETARIA”</span> 
         por cada día que transcurra sin entregarlo, la cantidad de
         <span class="resaltar">
-            ${!! evaluar($contrato->penaEntrega, 'Penalización Entrega') !!}, (
-            {!! evaluar($contrato->penaEntrega, 'Penalización Entrega',false,'dinero') !!} 00/100 MONEDA NACIONAL), 
+            ${!! evaluar($contrato->penaEntrega, 'Penalización Entrega',false,'dinero') !!}, (
+            {!! evaluar($contrato->penaEntrega, 'Penalización Entrega',false,'numeroALetras') !!} 
+            PESOS 00/100 MONEDA NACIONAL), 
         </span>
         desde el momento de la ejecución hasta que “EL INMUEBLE” sea entregado totalmente desocupado a 
         <span class="resaltar">“LA PARTE PROPIETARIA”.</span>
@@ -279,8 +277,9 @@
         <span class="resaltar">DÉCIMA PRIMERA.- La parte ocupante</span> entrega a 
         <span class="resaltar">“LA PARTE PROPIETARIA”,</span> en este acto, la cantidad de 
         <span class="resaltar">
-            ${!! evaluar($contrato->deposito, 'Depósito') !!}, (
-            {!! evaluar($contrato->deposito, 'Depósito',false,'dinero') !!} 00/100 MONEDA NACIONAL), 
+            ${!! evaluar($contrato->deposito, 'Depósito',false,'dinero') !!}, (
+            {!! evaluar($contrato->deposito, 'Depósito',false,'numeroALetras') !!} PESOS 
+            00/100 MONEDA NACIONAL), 
         </span>
         misma que queda en poder de esta última en calidad de depósito en garantía, para asegurar el 
         cumplimiento de todas y cada una de las obligaciones asumidas por 

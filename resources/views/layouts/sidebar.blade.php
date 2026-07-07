@@ -36,6 +36,7 @@
                         <a href="#" class="nav-link menu-trigger">💼 Admin</a>
                         <ul class="submenu d-none list-unstyled ps-2 border-start">
                             <li><a href="{{ url('/control') }}" class="nav-link small">✨ Control</a></li>
+                            <li><a href="{{ url('/contratos') }}" class="nav-link small">📄 Contratos</a></li>
                         </ul>                        
                     </li>
                 </ul>                
@@ -49,9 +50,9 @@
                                     <li><a href="{{ url('/arbolcasas') }}" class="nav-link small">🌳 Árbol de Casas</a></li>
                                     <li><a href="{{ url('/casas') }}" class="nav-link small">🏡 Casas</a></li>
                                     <li><a href="{{ url('/cuartos') }}" class="nav-link small">🚪 Cuartos</a></li>
+                                    <li><a href="{{ url('/propietarios') }}" class="nav-link small">👥 Propietarios</a></li>
                                     <li><a href="{{ url('/inquilinos') }}" class="nav-link small">👥 Inquilinos</a></li>
                                     <li><a href="{{ url('/asignacions') }}" class="nav-link small">📋 Asignaciones</a></li>
-                                    <li><a href="{{ url('/contratos') }}" class="nav-link small">📄 Contratos</a></li>
                                     <li><a href="{{ url('/contrato') }}" class="nav-link small">📄 Firma</a></li>
                                     <li><a href="{{ url('/evidencias') }}" class="nav-link small">📷 Evidencias</a></li>
                                     <li><a href="{{ url('/ticketssegs') }}" class="nav-link small">🎫 Seguimiento Tickets</a></li>
