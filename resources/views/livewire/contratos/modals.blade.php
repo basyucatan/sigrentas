@@ -12,45 +12,74 @@
                                 @if ($selected_id)
                                     <input type="hidden" wire:model="selected_id">
                                 @endif
-
-                                <div class="col-md-6">
-                                    <label class="etiBase">Idcuarto</label>
-                                    <input wire:model="IdCuarto" type="text" class="inpBase" onfocus="this.select()">
+                                <div class="col-12 col-md-4">
+                                    <label class="etiBase">Casa</label>
+                                    <select wire:model.live="IdCasa" wire:change="elegirCasa" class="inpBase">
+                                        <option value="">...</option>
+                                        @foreach ($casas as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('IdCasa')
+                                        <span class="error text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="etiBase">Cuarto</label>
+                                    <select wire:model="IdCuarto" class="inpBase">
+                                        <option value="">...</option>
+                                        @foreach ($this->cuartos as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('IdCuarto')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="etiBase">Idinquilino</label>
-                                    <input wire:model="IdInquilino" type="text" class="inpBase"
-                                        onfocus="this.select()">
+                                <div class="col-12 col-md-4">
+                                    <label class="etiBase">Inquilino</label>
+                                    <select wire:model="IdInquilino" class="inpBase">
+                                        <option value="">...</option>
+                                        @foreach ($this->inquilinos as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('IdInquilino')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="etiBase">Idpropietario</label>
-                                    <input wire:model="IdPropietario" type="text" class="inpBase"
-                                        onfocus="this.select()">
+                                <div class="col-12 col-md-4">
+                                    <label class="etiBase">Propietario</label>
+                                    <select wire:model="IdPropietario" class="inpBase">
+                                        <option value="">...</option>
+                                        @foreach ($this->propietarios as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('IdPropietario')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-4">
                                     <label class="etiBase">Fechaini</label>
                                     <input wire:model="fechaIni" type="date" class="inpBase" onfocus="this.select()">
                                     @error('fechaIni')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="etiBase">Fechafin</label>
-                                    <input wire:model="fechaFin" type="date" class="inpBase" onfocus="this.select()">
-                                    @error('fechaFin')
+                                <div class="col-12 col-md-4">
+                                    <label class="etiBase">Plazo</label>
+                                    <select wire:model="plazo" class="inpBase">
+                                        <option value="">...</option>
+                                        @foreach ($this->plazos as $plazo)
+                                            <option value="{{ $plazo }}">{{ $plazo }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('plazo')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-4">
                                     <label class="etiBase">Montorenta</label>
                                     <input wire:model="montoRenta" type="text" class="inpBase"
                                         onfocus="this.select()">
@@ -58,14 +87,14 @@
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-4">
                                     <label class="etiBase">Deposito</label>
                                     <input wire:model="deposito" type="text" class="inpBase" onfocus="this.select()">
                                     @error('deposito')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-4">
                                     <label class="etiBase">Penaentrega</label>
                                     <input wire:model="penaEntrega" type="text" class="inpBase"
                                         onfocus="this.select()">

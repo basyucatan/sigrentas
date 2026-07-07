@@ -44,17 +44,17 @@
                             <div class="p-2 my-2 bg-light rounded border d-flex justify-content-around text-center small">
                                 <div>
                                     <span class="text-muted d-block font-monospace" style="font-size: 0.75rem;">RENTA</span>
-                                    <strong class="text-success">${{ $row->montoRenta }}</strong>
+                                    <strong class="text-success">{{ Util::Dinero($row->montoRenta) }}</strong>
                                 </div>
                                 <div class="border-start mx-1"></div>
                                 <div>
                                     <span class="text-muted d-block font-monospace" style="font-size: 0.75rem;">DEPÓSITO</span>
-                                    <strong class="text-secondary">${{ $row->deposito }}</strong>
+                                    <strong class="text-secondary">{{ Util::Dinero($row->deposito) }}</strong>
                                 </div>
                                 <div class="border-start mx-1"></div>
                                 <div>
                                     <span class="text-muted d-block font-monospace" style="font-size: 0.75rem;">PENA</span>
-                                    <strong class="text-danger">${{ $row->penaEntrega }}</strong>
+                                    <strong class="text-danger">{{ Util::Dinero($row->penaEntrega) }}</strong>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end align-items-center gap-1">

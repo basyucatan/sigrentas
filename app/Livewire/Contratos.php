@@ -13,9 +13,23 @@ class Contratos extends Component
 {
     use WithPagination;
 	protected $paginationTheme = 'bootstrap';
-    public $verModalContrato=false, $selected_id, $keyWord, $IdCuarto, $IdInquilino, $IdPropietario, $fechaIni, $fechaFin, $montoRenta, $deposito, $penaEntrega, $docContrato, $docInvMuebles, $firma;
-	
-	public $adicionales = [];
+    public $verModalContrato=false, $selected_id, $keyWord, $IdCasa, $IdCuarto, $IdInquilino, $IdPropietario, 
+		$plazo,
+		$fechaIni, $fechaFin, $montoRenta, $deposito, $penaEntrega, $docContrato, $docInvMuebles, $firma;
+	public $adicionales = [], $casas=[], $cuartos =[], $inquilinos =[], $propietarios =[],
+		$plazos=['6','12','24','36','48','60'];
+    public function mount()
+    {
+        $this->casas = Util::getArray('casas');
+        $this->cuartos = Util::getArray('cuartos');
+		$this->inquilinos = Util::getArray('inquilinos');
+		$this->propietarios = Util::getArray('propietarios');
+    }
+    public function elegirCasa()
+    {
+        if (!$this->IdCasa) {return [];}
+        $this->cuartos = DB::table('cuartos')->where('IdCasa', $this->IdCasa)->pluck('cuarto','id')->toArray();
+    }
     public function imprimir($id)
     {
         $contrato = contrato::with(['cuarto','cuarto.casa','propietario','inquilino'])->findOrFail($id);
@@ -25,7 +39,6 @@ class Contratos extends Component
         $pdf->setPaper('letter', 'portrait');
         return response()->streamDownload(fn() => print($pdf->output()), "contrato.pdf", ['Content-Type' => 'application/pdf']);
     }
-	public function mount(){}
     public function updatedKeyWord(){$this->resetPage();}
     #[Computed]
 	public function filteredContratos()
@@ -61,12 +74,15 @@ class Contratos extends Component
     }
     public function resetInput()
     {
-        $this->resetExcept('keyWord');
+        $this->resetExcept('keyWord','casas','cuartos','inquilinos','propietarios');
     }
     public function edit($id)
     {
         $this->selected_id = $id;
 		$this->fill(Contrato::findOrFail($id)->toArray());
+		$this->IdCasa = DB::table('cuartos')->where('id', $this->IdCuarto)->first()?->IdCasa;
+		$this->plazo = \Carbon\Carbon::parse($this->fechaIni)
+    		->diffInMonths(\Carbon\Carbon::parse($this->fechaFin));
         $this->verModalContrato = true;
     }
     public function create()
@@ -81,12 +97,14 @@ class Contratos extends Component
 		'IdInquilino' => 'required',
 		'IdPropietario' => 'required',
 		'fechaIni' => 'required',
-		'fechaFin' => 'required',
+		'plazo' => 'required',
 		'montoRenta' => 'required',
 		'deposito' => 'required',
 		'penaEntrega' => 'required',
         ]);
-
+		$this->fechaFin = \Carbon\Carbon::parse($this->fechaIni)
+        ->addMonths((int) $this->plazo)
+        ->toDateString();
         Contrato::updateOrCreate(
 			['id' => $this->selected_id],
 			[

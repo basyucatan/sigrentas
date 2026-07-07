@@ -16,20 +16,22 @@
                                         <option value="{{ $key }}">{{ $value }}</option>
                                     @endforeach
                                 </select>
-                                @error('IdCasa') <span class="error text-danger">{{ $message }}</span> @enderror
+                                @error('IdCasa')
+                                    <span class="error text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
-<div class="col-12 col-md-3">
-    <label class="etiBase">Cuarto</label>
-    <select wire:model="IdCuarto" class="inpBase">
-        <option value="">...</option>
-        @foreach ($this->cuartos as $key => $value)
-            <option value="{{ $key }}">{{ $value }}</option>
-        @endforeach
-    </select>
-    @error('IdCuarto')
-        <span class="error text-danger">{{ $message }}</span>
-    @enderror
-</div>
+                            <div class="col-12 col-md-3">
+                                <label class="etiBase">Cuarto</label>
+                                <select wire:model="IdCuarto" class="inpBase">
+                                    <option value="">...</option>
+                                    @foreach ($this->cuartos as $key => $value)
+                                        <option value="{{ $key }}">{{ $value }}</option>
+                                    @endforeach
+                                </select>
+                                @error('IdCuarto')
+                                    <span class="error text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
                             <div class="col-12 col-md-3">
                                 <label class="etiBase">Técnico Asignado</label>
                                 <select wire:model="IdTecnico" class="inpBase">
@@ -38,13 +40,17 @@
                                         <option value="{{ $key }}">{{ $value }}</option>
                                     @endforeach
                                 </select>
-                                @error('IdTecnico') <span class="error text-danger">{{ $message }}</span> @enderror
+                                @error('IdTecnico')
+                                    <span class="error text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             @if ($IdPrioridad == 2)
                                 <div class="col-12 col-md-3">
                                     <label class="etiBase">Fecha Programada</label>
                                     <input type="datetime-local" wire:model="fechaPro" class="inpBase">
-                                    @error('fechaPro') <span class="error text-danger">{{ $message }}</span> @enderror
+                                    @error('fechaPro')
+                                        <span class="error text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             @endif
                             <div class="col-12">
@@ -52,11 +58,15 @@
                                 <div class="btn-group w-100 flex-wrap" role="group">
                                     @foreach ($prioridads as $key => $value)
                                         <input type="radio" class="btn-check" wire:model.live="IdPrioridad"
-                                            value="{{ $key }}" id="prioridad{{ $key }}" autocomplete="off">
-                                        <label class="btn btn-outline-secondary btn-sm" for="prioridad{{ $key }}">{{ $value }}</label>
+                                            value="{{ $key }}" id="prioridad{{ $key }}"
+                                            autocomplete="off">
+                                        <label class="btn btn-outline-secondary btn-sm"
+                                            for="prioridad{{ $key }}">{{ $value }}</label>
                                     @endforeach
                                 </div>
-                                @error('IdPrioridad') <span class="error text-danger">{{ $message }}</span> @enderror
+                                @error('IdPrioridad')
+                                    <span class="error text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="col-12">
                                 <label class="etiBase d-block">Falla</label>
@@ -64,12 +74,15 @@
                                     @foreach ($fallas as $key => $value)
                                         <input type="radio" class="btn-check" wire:model="IdFalla"
                                             value="{{ $key }}" id="falla{{ $key }}"
-                                            {{ ($IdPrioridad == 2 && $key != 6) ? 'disabled' : '' }}
+                                            {{ $IdPrioridad == 2 && $key != 6 ? 'disabled' : '' }}
                                             autocomplete="off">
-                                        <label class="btn btn-outline-secondary btn-sm" for="falla{{ $key }}">{{ $value }}</label>
+                                        <label class="btn btn-outline-secondary btn-sm"
+                                            for="falla{{ $key }}">{{ $value }}</label>
                                     @endforeach
                                 </div>
-                                @error('IdFalla') <span class="error text-danger">{{ $message }}</span> @enderror
+                                @error('IdFalla')
+                                    <span class="error text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="col-md-6">
                                 <label class="etiBase d-block">Tipo</label>
@@ -77,12 +90,15 @@
                                     @foreach ($tipos as $key => $value)
                                         <input type="radio" class="btn-check" wire:model="tipo"
                                             value="{{ $key }}" id="tipo{{ $key }}"
-                                            {{ ($IdPrioridad == 2 && $key != 'entrega') ? 'disabled' : '' }}
+                                            {{ $IdPrioridad == 2 && $key != 'entrega' ? 'disabled' : '' }}
                                             autocomplete="off">
-                                        <label class="btn btn-outline-secondary btn-sm" for="tipo{{ $key }}">{{ $value }}</label>
+                                        <label class="btn btn-outline-secondary btn-sm"
+                                            for="tipo{{ $key }}">{{ $value }}</label>
                                     @endforeach
                                 </div>
-                                @error('tipo') <span class="error text-danger">{{ $message }}</span> @enderror
+                                @error('tipo')
+                                    <span class="error text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="col-md-6">
                                 <label class="etiBase d-block">Estatus</label>
@@ -90,17 +106,22 @@
                                     @foreach ($lEstatus as $key => $value)
                                         <input type="radio" class="btn-check" wire:model="estatus"
                                             value="{{ $key }}" id="estatus{{ $key }}"
-                                            {{ ($IdPrioridad == 2 && $key != 'proceso') ? 'disabled' : '' }}
+                                            {{ $IdPrioridad == 2 && $key != 'proceso' ? 'disabled' : '' }}
                                             autocomplete="off">
-                                        <label class="btn btn-outline-secondary btn-sm" for="estatus{{ $key }}">{{ $value }}</label>
+                                        <label class="btn btn-outline-secondary btn-sm"
+                                            for="estatus{{ $key }}">{{ $value }}</label>
                                     @endforeach
                                 </div>
-                                @error('estatus') <span class="error text-danger">{{ $message }}</span> @enderror
+                                @error('estatus')
+                                    <span class="error text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="col-12">
                                 <label class="etiBase">Descripción</label>
                                 <textarea wire:model="ticket" class="inpBase"></textarea>
-                                @error('ticket') <span class="error text-danger">{{ $message }}</span> @enderror
+                                @error('ticket')
+                                    <span class="error text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                     </div>
