@@ -16,21 +16,19 @@
         if (!$valor && $valor !== 0) {
             return '<span class="warning">FALTA ' . e(mb_strtoupper($nombreCampo)) . '</span>';
         }
+        static $convertidor;
+        $convertidor ??= new NumeroALetras();
         switch ($formato) {
             case 'dinero':
                 $texto = number_format((float)$valor, 2);
                 break;
             case 'numeroALetras':
-                static $convertidor;
-                $convertidor ??= new NumeroALetras();
                 $texto = $convertidor->toWords($valor);
                 break;
             case 'fechaALetras':
                 $texto = Util::formatFecha($valor, 'Texto');
                 break;
             case 'diaALetras':
-                static $convertidor;
-                $convertidor ??= new NumeroALetras();
                 $texto = $convertidor->toWords(\Carbon\Carbon::parse($valor)->day);
                 break;
             default:
