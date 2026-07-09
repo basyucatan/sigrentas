@@ -61,26 +61,21 @@
                                     @enderror
                                 </div>
                                 <div class="col-12 col-md-4">
-                                    <label class="etiBase">Fechaini</label>
+                                    <label class="etiBase">Fecha Ini</label>
                                     <input wire:model="fechaIni" type="date" class="inpBase" onfocus="this.select()">
                                     @error('fechaIni')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="col-12 col-md-4">
-                                    <label class="etiBase">Plazo</label>
-                                    <select wire:model="plazo" class="inpBase">
-                                        <option value="">...</option>
-                                        @foreach ($this->plazos as $plazo)
-                                            <option value="{{ $plazo }}">{{ $plazo }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('plazo')
+                                    <label class="etiBase">Fecha Fin</label>
+                                    <input wire:model="fechaFin" type="date" class="inpBase" onfocus="this.select()">
+                                    @error('fechaFin')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="col-12 col-md-4">
-                                    <label class="etiBase">Montorenta</label>
+                                    <label class="etiBase">Monto Renta</label>
                                     <input wire:model="montoRenta" type="text" class="inpBase"
                                         onfocus="this.select()">
                                     @error('montoRenta')
@@ -95,7 +90,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-12 col-md-4">
-                                    <label class="etiBase">Penaentrega</label>
+                                    <label class="etiBase">Pena Entrega</label>
                                     <input wire:model="penaEntrega" type="text" class="inpBase"
                                         onfocus="this.select()">
                                     @error('penaEntrega')

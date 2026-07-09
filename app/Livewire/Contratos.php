@@ -16,8 +16,7 @@ class Contratos extends Component
     public $verModalContrato=false, $selected_id, $keyWord, $IdCasa, $IdCuarto, $IdInquilino, $IdPropietario, 
 		$plazo,
 		$fechaIni, $fechaFin, $montoRenta, $deposito, $penaEntrega, $docContrato, $docInvMuebles, $firma;
-	public $adicionales = [], $casas=[], $cuartos =[], $inquilinos =[], $propietarios =[],
-		$plazos=['6','12','24','36','48','60'];
+	public $adicionales = [], $casas=[], $cuartos =[], $inquilinos =[], $propietarios =[];
     public function mount()
     {
         $this->casas = Util::getArray('casas');
@@ -81,8 +80,6 @@ class Contratos extends Component
         $this->selected_id = $id;
 		$this->fill(Contrato::findOrFail($id)->toArray());
 		$this->IdCasa = DB::table('cuartos')->where('id', $this->IdCuarto)->first()?->IdCasa;
-		$this->plazo = \Carbon\Carbon::parse($this->fechaIni)
-    		->diffInMonths(\Carbon\Carbon::parse($this->fechaFin));
         $this->verModalContrato = true;
     }
     public function create()
@@ -97,14 +94,10 @@ class Contratos extends Component
 		'IdInquilino' => 'required',
 		'IdPropietario' => 'required',
 		'fechaIni' => 'required',
-		'plazo' => 'required',
 		'montoRenta' => 'required',
 		'deposito' => 'required',
 		'penaEntrega' => 'required',
         ]);
-		$this->fechaFin = \Carbon\Carbon::parse($this->fechaIni)
-        ->addMonths((int) $this->plazo)
-        ->toDateString();
         Contrato::updateOrCreate(
 			['id' => $this->selected_id],
 			[

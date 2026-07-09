@@ -14,7 +14,7 @@
                                 @endif
 
                                 <div class="col-md-6">
-                                    <label class="etiBase">Iduser</label>
+                                    <label class="etiBase">Iduser (6)</label>
                                     <input wire:model="IdUser" type="text" class="inpBase" onfocus="this.select()">
                                     @error('IdUser')
                                         <span class="error text-danger">{{ $message }}</span>

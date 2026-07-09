@@ -56,6 +56,7 @@ class Inquilinos extends Component
     public function create()
     {
         $this->resetInput();
+        $this->IdUser = 6;
         $this->verModalInquilino = true;
     }    
     public function save()
