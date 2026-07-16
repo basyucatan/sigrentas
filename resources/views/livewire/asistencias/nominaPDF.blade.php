@@ -11,9 +11,8 @@
     <header class="cabecera">
         <img src="{{ public_path('img/logo.png') }}" class="logo">
         <div style="margin-left: 50px;">
-            <strong style="font-size: 12pt;">RELACIÓN DE PAGO DE NÓMINA</strong><br>
+            <strong style="font-size: 12pt;">PAGO DE NÓMINA</strong><br>
             Generado el: {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}<br>
-            Departamento de Recursos Humanos
         </div>
     </header>
     @foreach($semanasProcesadas as $semana)
@@ -24,7 +23,7 @@
             <table style="width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr>
-                        <th width="40%">Nombre del Empleado</th>
+                        <th width="40%">Nombre</th>
                         <th width="20%" class="derecha">Sueldo Semanal</th>
                         <th width="20%" class="derecha">Descuentos</th>
                         <th width="20%" class="derecha">Monto a Pagar</th>
