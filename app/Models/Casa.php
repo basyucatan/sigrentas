@@ -13,7 +13,7 @@ class Casa extends Model
 
     protected $table = 'casas';
 
-    protected $fillable = ['casa','direccion','gmaps','adicionales'];
+    protected $fillable = ['casa','direccion','gmaps','ubicacion','adicionales'];
     protected $casts = [
         'adicionales' => 'array'
     ];

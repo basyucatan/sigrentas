@@ -46,3 +46,13 @@ function togglePassword() {
         passwordInput.type = 'password';
     }
 }
+// Autoselect  
+document.addEventListener('focusin', function(e) {
+    if (
+        e.target.classList.contains('inpBase') ||
+        e.target.classList.contains('inpChico')||
+        e.target.classList.contains('inpSolo')
+    ) {
+        e.target.select();
+    }
+});

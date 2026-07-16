@@ -5,81 +5,91 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Asignacion;
+use App\Models\User;
+use App\Models\Casa;
 use Livewire\Attributes\Computed;
-use App\Models\{Util};
 use Illuminate\Support\Facades\DB;
 
 class Asignacions extends Component
 {
     use WithPagination;
-	protected $paginationTheme = 'bootstrap';
-    public $verModalAsignacion=false, $selected_id, $keyWord, $IdCasa, $IdTecnico;
-	
-    public function mount(){}
-    public function updatedKeyWord(){$this->resetPage();}
-    #[Computed]
-	public function filteredAsignacions()
-	{
-		$keyWord = '%' . $this->keyWord . '%';
-		return Asignacion::Where('id','>',0)
-			->where(function ($query) use ($keyWord) {
-				$query
-						->orWhere('IdCasa', 'LIKE', $keyWord)
-						->orWhere('IdTecnico', 'LIKE', $keyWord);
-			})
-			->paginate(12);
-	}
-	public function render()
-	{
-		return view('livewire.asignacions.view', [
-			'asignacions' => $this->filteredAsignacions,
-		]);
-	}
-    public function cancel()
-    {
-        $this->resetInput();
-        $this->verModalAsignacion = false;
-    }
-    public function resetInput()
-    {
-        $this->resetExcept('keyWord');
-    }
-    public function edit($id)
-    {
-        $this->selected_id = $id;
-		$this->fill(Asignacion::findOrFail($id)->toArray());
-        $this->verModalAsignacion = true;
-    }
-    public function create()
-    {
-        $this->resetInput();
-        $this->verModalAsignacion = true;
-    }    
-    public function save()
-    {
-        $this->validate([
-		'IdCasa' => 'required',
-		'IdTecnico' => 'required',
-        ]);
+    protected $paginationTheme = 'bootstrap';
+    public $IdUser, $buscadorUser = '', $buscadorCasa = '';
 
-        Asignacion::updateOrCreate(
-			['id' => $this->selected_id],
-			[
-				'IdCasa' => $this-> IdCasa,
-				'IdTecnico' => $this-> IdTecnico
-			]
-		);
-        $this->resetInput();
-        $this->verModalAsignacion = false;
-    }
-    public function paginationView()
+    public function updatedBuscadorUser()
     {
-        return 'livewire.paginacionBase';
+        $this->resetPage('pageUsers');
     }
-    public function destroy($id)
+
+    public function seleccionarUsuario($id)
     {
-        if ($id) {
-            Asignacion::where('id', $id)->delete();
+        $this->IdUser = $id;
+        $this->buscadorCasa = '';
+    }
+
+    #[Computed]
+    public function obtenerUsuarios()
+    {
+        return User::where('name', 'LIKE', '%' . $this->buscadorUser . '%')
+            ->orWhere('email', 'LIKE', '%' . $this->buscadorUser . '%')
+            ->orWhere('telefono', 'LIKE', '%' . $this->buscadorUser . '%')
+            ->paginate(10, ['*'], 'pageUsers');
+    }
+
+    #[Computed]
+    public function obtenerCasasDisponibles()
+    {
+        if (!$this->IdUser) {
+            return collect();
         }
+        $casasAsignadas = Asignacion::where('IdUser', $this->IdUser)->pluck('IdCasa');
+        return Casa::whereNotIn('id', $casasAsignadas)
+            ->where('casa', 'LIKE', '%' . $this->buscadorCasa . '%')
+            ->get();
+    }
+
+    #[Computed]
+    public function obtenerAsignacionesActuales()
+    {
+        if (!$this->IdUser) {
+            return collect();
+        }
+        return Asignacion::where('IdUser', $this->IdUser)
+            ->with('Casa')
+            ->get();
+    }
+
+    public function asignarCasa($idCasa)
+    {
+        if (!$this->IdUser) return;
+        Asignacion::updateOrCreate([
+            'IdCasa' => $idCasa,
+            'IdUser' => $this->IdUser
+        ]);
+    }
+
+    public function desasignarCasa($idAsignacion)
+    {
+        Asignacion::destroy($idAsignacion);
+    }
+
+    public function asignarCasaATodos($idCasa)
+    {
+        $usuarios = User::pluck('id');
+        foreach ($usuarios as $idU) {
+            Asignacion::updateOrCreate([
+                'IdCasa' => $idCasa,
+                'IdUser' => $idU
+            ]);
+        }
+    }
+
+    public function render()
+    {
+        return view('livewire.asignacions.view', [
+            'usuarios' => $this->obtenerUsuarios,
+            'casasDisponibles' => $this->obtenerCasasDisponibles,
+            'asignaciones' => $this->obtenerAsignacionesActuales,
+        ]);
     }
 }

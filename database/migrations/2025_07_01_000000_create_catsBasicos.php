@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('casa', 50)->unique();
             $table->string('direccion', 255);
             $table->string('gmaps', 255);
+            $table->string('ubicacion', 60)->nullable();
             $table->json('adicionales')->nullable();
         });
         Schema::create('cuartos', function (Blueprint $table) {
@@ -64,7 +65,7 @@ return new class extends Migration
         Schema::create('asignacions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('IdCasa')->constrained('casas')->restrictOnDelete();
-            $table->foreignId('IdTecnico')->constrained('tecnicos')->restrictOnDelete();
+            $table->foreignId('IdUser')->constrained('users')->restrictOnDelete();
         });
         Schema::create('prioridads', function (Blueprint $table) {
             $table->id();
@@ -75,6 +76,11 @@ return new class extends Migration
         Schema::create('fallas', function (Blueprint $table) {
             $table->id();
             $table->string('falla', 100);
+        });
+        Schema::create('penas', function (Blueprint $table) {
+            $table->id();
+            $table->string('pena', 20);
+            $table->decimal('descuentoDias', 5,2);
         });
     }
 

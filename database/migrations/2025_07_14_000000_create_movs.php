@@ -65,6 +65,16 @@ return new class extends Migration
             $table->date('fecha');
             $table->json('adicionales')->nullable();
         });
+        Schema::create('asistencias', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('IdUser')->constrained('users')->cascadeOnDelete();
+            $table->date('fecha');
+            $table->time('horaEnt');
+            $table->time('horaSal');
+            $table->string('ubiEnt',60);
+            $table->string('ubiSal',60);
+            $table->json('adicionales')->nullable();
+        });
     }
 
     public function down()

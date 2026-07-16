@@ -12,24 +12,28 @@
                                 @if ($selected_id)<input type="hidden" wire:model="selected_id">@endif
                                 <div class="col-md-6">
                                     <label for="name" class="etiBase">Nombre</label>
-                                    <input wire:model.live="name" type="text" class="inpBase" id="name">
+                                    <input wire:model="name" type="text" class="inpBase" id="name">
                                     @error('name')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label for="telefono" class="etiBase">Telefono</label>
-                                    <input wire:model.live="telefono" type="text" class="inpBase" id="telefono">
+                                    <input wire:model="telefono" type="text" class="inpBase" id="telefono">
                                     @error('telefono')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label for="email" class="etiBase">Email</label>
-                                    <input wire:model.live="email" type="text" class="inpBase" id="email">
+                                    <input wire:model="email" type="text" class="inpBase" id="email">
                                     @error('email')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="etiBase">Sueldo</label>
+                                    <input wire:model="adicionales.sueldo" type="number" class="inpBase">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="etiBase">Rol</label>
@@ -43,14 +47,14 @@
                                 </div>                                 
                                 <div class="col-md-6">
                                     <label for="password" class="etiBase">Password</label>
-                                    <input wire:model.live="password" type="password" class="inpBase" id="password">
+                                    <input wire:model="password" type="password" class="inpBase" id="password">
                                     @error('password')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label for="passwordConf" class="etiBase">Confirmar Password</label>
-                                    <input wire:model.live="passwordConf" type="password" class="inpBase" id="passwordConf">
+                                    <input wire:model="passwordConf" type="password" class="inpBase" id="passwordConf">
                                 </div>
        
                             </div>

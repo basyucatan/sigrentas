@@ -1,10 +1,10 @@
-@if($verModalAsignacion)
+@if($verModalPena)
     <div class="modal-overlay">
         <div x-data="{}" x-init="dragModal($el)" class="modal-dialog" wire:ignore.self>            
             <div class="modal-content">
                 <div class="cardPrin">
                     <div class="cardPrin-header" style="cursor: move;">
-                        <span>{{ $selected_id ? 'Editar Asignacion' : 'Crear Asignacion' }}</span>
+                        <span>{{ $selected_id ? 'Editar Pena' : 'Crear Pena' }}</span>
                     </div>
                     <div class="cardPrin-body" style="padding: 10px; max-height: 400px; overflow-y: auto;">
                         <form>
@@ -14,14 +14,14 @@
                                 @endif
 
 <div class="col-md-6">
-    <label class="etiBase">Idcasa</label>
-    <input wire:model="IdCasa" type="text" class="inpBase" onfocus="this.select()">
-    @error('IdCasa') <span class="error text-danger">{{ $message }}</span> @enderror
+    <label class="etiBase">Pena</label>
+    <input wire:model="pena" type="text" class="inpBase" onfocus="this.select()">
+    @error('pena') <span class="error text-danger">{{ $message }}</span> @enderror
 </div>
 <div class="col-md-6">
-    <label class="etiBase">Iduser</label>
-    <input wire:model="IdUser" type="text" class="inpBase" onfocus="this.select()">
-    @error('IdUser') <span class="error text-danger">{{ $message }}</span> @enderror
+    <label class="etiBase">Descuentodias</label>
+    <input wire:model="descuentoDias" type="text" class="inpBase" onfocus="this.select()">
+    @error('descuentoDias') <span class="error text-danger">{{ $message }}</span> @enderror
 </div>
 
                             </div>

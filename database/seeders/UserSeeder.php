@@ -1,10 +1,6 @@
 <?php
-
 namespace Database\Seeders;
-
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 class UserSeeder extends Seeder
@@ -23,5 +19,24 @@ class UserSeeder extends Seeder
             'password'=>Hash::make('tecnico2$'),'activo'=>true,'IdDepto'=>5])->assignRole('tecnico');
         User::create(['id'=>6,'name'=>'Inquilino1','telefono'=>'9991003001',
             'password'=>Hash::make('inquilino1$'),'activo'=>true,'IdDepto'=>6])->assignRole('inquilino');
+        User::create(['id'=>7,'name'=>'Rich','telefono'=>'9991005001',
+            'password'=>Hash::make('Rich$'),'activo'=>true,'IdDepto'=>5])->assignRole('inquilino');
+
+        $this->crear(['DonShe', 'LaGuerre', 'Marlene', 'Primo', 'Burgos', 'Sheito'],'Admin',101,9991005002,5);
+        $this->crear(['Anibal', 'Mario', 'Luis', 'Fabian', 'Jaciel', 'Yen'],'tecnico',201,9991003002,3);
+    }
+    private function crear($users, $rol, $IdIni, $telIni, $IdDepto)
+    {
+        foreach ($users as $indice => $nombre) {
+            User::create([
+                'id' => $IdIni + $indice,
+                'name' => $nombre,
+                'telefono' => (string)($telIni + $indice),
+                'password' => Hash::make($nombre . '$'),
+                'activo' => true,
+                'IdDepto' => $IdDepto,
+                'adicionales' => ['sueldo' => 5000]
+            ])->assignRole($rol);
+        }
     }
 }

@@ -17,7 +17,7 @@ class Users extends Component
 	protected $paginationTheme = 'bootstrap';
     public $verModalUser=false, $selected_id, $keyWord, $password, $passwordConf,
         $name, $telefono, $email, $IdRol;
-    public $roles = [];
+    public $roles = [], $adicionales = [];
 
 	public function mount(){
         $this->roles = Util::getArray('roles','name');
@@ -60,16 +60,16 @@ public function render()
         $user = User::findOrFail($id);
 		$this->fill($user->toArray());
         $this->IdRol = $user->roles->pluck('id')->first();
+        $this->adicionales ??= [];
         $this->password = '';
         $this->passwordConf = '';
         $this->verModalUser = true;
     }
-   
     public function save()
     {
         $this->validate([
 		'name' => 'required',
-		'telefono' => 'required|digits:10',
+		'telefono' => 'required|digits_between:4,12',
 		'email' => 'required',
         'password' => 'required|min:4|same:passwordConf'
         ]);
@@ -82,6 +82,7 @@ public function render()
             'name'     => $this->name,
             'telefono' => $this->telefono,
             'email'    => $this->email,
+            'adicionales'    => $this->adicionales,
         ];
 
         if ($this->password) {

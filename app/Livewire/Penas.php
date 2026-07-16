@@ -4,42 +4,41 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Casa;
+use App\Models\Pena;
 use Livewire\Attributes\Computed;
 use App\Models\{Util};
 use Illuminate\Support\Facades\DB;
 
-class Casas extends Component
+class Penas extends Component
 {
     use WithPagination;
 	protected $paginationTheme = 'bootstrap';
-    public $verModalCasa=false, $selected_id, $keyWord, $casa, $direccion, $gmaps, $ubicacion;
-	public $adicionales = [];
+    public $verModalPena=false, $selected_id, $keyWord, $pena, $descuentoDias;
+	
     public function mount(){}
     public function updatedKeyWord(){$this->resetPage();}
     #[Computed]
-	public function filteredCasas()
+	public function filteredPenas()
 	{
 		$keyWord = '%' . $this->keyWord . '%';
-		return Casa::Where('id','>',0)
+		return Pena::Where('id','>',0)
 			->where(function ($query) use ($keyWord) {
 				$query
-						->orWhere('casa', 'LIKE', $keyWord)
-						->orWhere('direccion', 'LIKE', $keyWord)
-						->orWhere('gmaps', 'LIKE', $keyWord);
+						->orWhere('pena', 'LIKE', $keyWord)
+						->orWhere('descuentoDias', 'LIKE', $keyWord);
 			})
 			->paginate(12);
 	}
 	public function render()
 	{
-		return view('livewire.casas.view', [
-			'casas' => $this->filteredCasas,
+		return view('livewire.penas.view', [
+			'penas' => $this->filteredPenas,
 		]);
 	}
     public function cancel()
     {
         $this->resetInput();
-        $this->verModalCasa = false;
+        $this->verModalPena = false;
     }
     public function resetInput()
     {
@@ -48,33 +47,30 @@ class Casas extends Component
     public function edit($id)
     {
         $this->selected_id = $id;
-		$this->fill(Casa::findOrFail($id)->toArray());
-        $this->verModalCasa = true;
+		$this->fill(Pena::findOrFail($id)->toArray());
+        $this->verModalPena = true;
     }
     public function create()
     {
         $this->resetInput();
-        $this->verModalCasa = true;
+        $this->verModalPena = true;
     }    
     public function save()
     {
         $this->validate([
-		'casa' => 'required',
-		'direccion' => 'required',
-		'gmaps' => 'required',
+		'pena' => 'required',
+		'descuentoDias' => 'required',
         ]);
-        Casa::updateOrCreate(
+
+        Pena::updateOrCreate(
 			['id' => $this->selected_id],
 			[
-				'casa' => $this-> casa,
-				'direccion' => $this-> direccion,
-				'gmaps' => $this-> gmaps,
-				'ubicacion' => $this->ubicacion,
-				'adicionales' => $this->adicionales,
+				'pena' => $this-> pena,
+				'descuentoDias' => $this-> descuentoDias
 			]
 		);
         $this->resetInput();
-        $this->verModalCasa = false;
+        $this->verModalPena = false;
     }
     public function paginationView()
     {
@@ -83,7 +79,7 @@ class Casas extends Component
     public function destroy($id)
     {
         if ($id) {
-            Casa::where('id', $id)->delete();
+            Pena::where('id', $id)->delete();
         }
     }
 }

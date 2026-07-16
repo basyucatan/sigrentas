@@ -36,6 +36,13 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
+                                    <label class="etiBase">Log. Latitud</label>
+                                    <input wire:model="ubicacion" type="text" class="inpBase" onfocus="this.select()">
+                                    @error('ubicacion')
+                                        <span class="error text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
                                     <label class="etiBase">Descripción</label>
                                     <textarea wire:model="adicionales.descripcion" class="inpBase"></textarea>
                                     @error('adicionales.descripcion')

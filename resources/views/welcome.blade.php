@@ -24,7 +24,7 @@
         
         @auth
         <div class="mt-4">
-            <a href="/home" class="bot botVerde">Inicio</a>
+            <a href="/asistencias" class="bot botVerde">Checador</a>
         </div>
         @endauth
     </div>

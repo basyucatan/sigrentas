@@ -16,8 +16,8 @@ class User extends Authenticatable
 
     protected $table = 'users';
 
-    protected $fillable = ['name','telefono','IdBodega','IdDepto','email','password'];   
-     
+    protected $fillable = ['name','telefono','IdBodega','IdDepto','email','password','adicionales'];   
+    protected $casts = ['adicionales' => 'array'];
     public function Depto()
     {
         return $this->hasOne('App\Models\Depto', 'id', 'IdDepto');
