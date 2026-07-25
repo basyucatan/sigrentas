@@ -2,7 +2,7 @@
 <div class="cardPrin d-flex flex-column h-100">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <div class="cardPrin-body overflow-y-auto flex-grow-1 p-2 p-md-3">
+    <div class="cardPrin-body">
         <div class="row g-3">
             <div class="col-12 col-md-4">
                 <div class="cardSec mb-3">
@@ -24,7 +24,7 @@
                         @endif
                         <div class="mb-3 text-start">
                             <label for="justificacion" class="etiBase">Justificación / Observación</label>
-                            <textarea id="justificacion" class="inpBase w-100" rows="3" placeholder="Escribe aquí el motivo en caso de retraso o incidencia..." wire:model="justificacion"></textarea>
+                            <textarea id="justificacion" class="inpBase w-100" rows="2" placeholder="Escribe aquí el motivo en caso de retraso o incidencia..." wire:model="justificacion"></textarea>
                         </div>
                         <div class="d-flex gap-2 justify-content-center">
                             <button id="btnChecada" type="button" class="bot botVerde px-3 py-2" onclick="obtenerUbicacionYRegistrar()" wire:loading.attr="disabled" wire:target="registrarAsistencia">
@@ -188,116 +188,5 @@
             </div>
         </div>
     </div>
-    <script>
-        let mapa = null;
-        let marcadorUsuario = null;
-        let ubicacionActual = null;
-        const escalaIcono = 0.5;
-        function crearIcono(color) {
-            return L.icon({
-                iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                iconSize: [25 * escalaIcono, 41 * escalaIcono],
-                iconAnchor: [12 * escalaIcono, 41 * escalaIcono],
-                popupAnchor: [1 * escalaIcono, -34 * escalaIcono],
-                shadowSize: [41 * escalaIcono, 41 * escalaIcono]
-            });
-        }
-        const iconos = {
-            blue: crearIcono('blue'),
-            green: crearIcono('green'),
-            orange: crearIcono('orange')
-        };
-        function actualizarMarcadorUsuario(lat, lng) {
-            if (!mapa) return;
-            mapa.invalidateSize();
-            mapa.setView([lat, lng], 16);
-            if (marcadorUsuario) {
-                marcadorUsuario.setLatLng([lat, lng]);
-            } else {
-                marcadorUsuario = L.marker([lat, lng], {
-                    icon: iconos.blue
-                }).addTo(mapa);
-            }
-        }
-        function inicializarMapa() {
-            let contenedorMapa = document.getElementById('IdMapa');
-            if (!contenedorMapa) return;
-            if (mapa) {
-                mapa.remove();
-                mapa = null;
-                marcadorUsuario = null;
-            }
-            let todasLasCasas = JSON.parse(contenedorMapa.getAttribute('data-casas') || '[]');
-            mapa = L.map('IdMapa').setView([20.9673, -89.6237], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa);
-            todasLasCasas.forEach(function(casa) {
-                if (!casa.ubicacion) return;
-                let partes = casa.ubicacion.split(',');
-                if (partes.length !== 2) return;
-                let latCasa = parseFloat(partes[0].trim());
-                let lonCasa = parseFloat(partes[1].trim());
-                let color = parseInt(casa.esAsignada) === 1 ? 'green' : 'orange';
-                L.marker([latCasa, lonCasa], {
-                    icon: iconos[color]
-                }).addTo(mapa).bindPopup(casa.casa || 'Casa ID: ' + casa.id);
-            });
-            if (ubicacionActual) {
-                actualizarMarcadorUsuario(ubicacionActual.lat, ubicacionActual.lng);
-            }
-        }
-        function obtenerUbicacionYRegistrar() {
-            if (!ubicacionActual) {
-                alert('Aún se está obteniendo tu ubicación.');
-                return;
-            }
-            actualizarMarcadorUsuario(
-                ubicacionActual.lat,
-                ubicacionActual.lng
-            );
-            @this.registrarAsistencia(
-                {{ auth()->id() ?? 1 }},
-                ubicacionActual.lat + ',' + ubicacionActual.lng
-            );
-        }
-        document.addEventListener('livewire:navigated', function() {
-            inicializarMapa();
-            if (navigator.geolocation) {
-                navigator.geolocation.watchPosition(
-                    function(position) {
-                        ubicacionActual = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude
-                        };
-                        actualizarMarcadorUsuario(
-                            ubicacionActual.lat,
-                            ubicacionActual.lng
-                        );
-                    },
-                    function(error) {
-                        console.error(error);
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 10000
-                    }
-                );
-            } else {
-                alert('Tu navegador no soporta geolocalización.');
-            }
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof Livewire !== 'undefined') {
-                inicializarMapa();
-            }
-        });
-        Livewire.hook('morph.updated', ({ el }) => {
-            if (document.getElementById('IdMapa') && !mapa) {
-                inicializarMapa();
-            } else if (mapa) {
-                mapa.invalidateSize();
-            }
-        });
-    </script>
+    @include('livewire.asistencias.script')
 </div>
