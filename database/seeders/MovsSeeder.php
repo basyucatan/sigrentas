@@ -2,6 +2,7 @@
 namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class MovsSeeder extends Seeder
 {
     public function run()
@@ -27,6 +28,14 @@ $asistencias = array(
   array('id' => '32','IdUser' => '1','fecha' => '2026-07-08','horaEnt' => '08:25:01','horaSal' => '19:04:18','ubiEnt' => '20.980460571980746,-89.62444967262628','ubiSal' => '20.980479002402397,-89.62446854547412','adicionales' => NULL)
 );
 DB::table('asistencias')->insert($asistencias);
+$gastos = [
+    ['IdEfectuo' => 1, 'IdAutorizo' => null, 'estatus' => 'pendiente', 'monto' => null, 'fecha' => Carbon::now()->subDays(2)->format('Y-m-d'), 'foto' => 'gasto-1784561972.png.png', 'adicionales' => json_encode(['concepto' => 'Gasolina para traslado'])],
+    ['IdEfectuo' => 1, 'IdAutorizo' => null, 'estatus' => 'efectuado', 'monto' => null, 'fecha' => Carbon::now()->subDays(5)->format('Y-m-d'), 'foto' => '', 'adicionales' => json_encode(['concepto' => 'Cambio de aceite'])],
+    ['IdEfectuo' => 1, 'IdAutorizo' => null, 'estatus' => 'autorizado', 'monto' => null, 'fecha' => Carbon::now()->subDays(10)->format('Y-m-d'), 'foto' => '', 'adicionales' => json_encode(['concepto' => 'Comida de trabajo'])],
+    ['IdEfectuo' => 1, 'IdAutorizo' => null, 'estatus' => 'cancelado', 'monto' => null, 'fecha' => Carbon::now()->subDays(12)->format('Y-m-d'), 'foto' => '', 'adicionales' => json_encode(['concepto' => 'Hojas y papelería'])],
+    ['IdEfectuo' => 1, 'IdAutorizo' => null, 'estatus' => 'pendiente', 'monto' => null, 'fecha' => Carbon::now()->format('Y-m-d'), 'foto' => '', 'adicionales' => json_encode(['concepto' => 'Material de consumo'])]
+];
+DB::table('gastos')->insert($gastos);
     }
 }
 

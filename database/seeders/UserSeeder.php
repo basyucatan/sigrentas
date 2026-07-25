@@ -20,10 +20,11 @@ class UserSeeder extends Seeder
         User::create(['id'=>6,'name'=>'Inquilino1','telefono'=>'9991003001',
             'password'=>Hash::make('inquilino1$'),'activo'=>true,'IdDepto'=>6])->assignRole('inquilino');
         User::create(['id'=>7,'name'=>'Rich','telefono'=>'9991005001',
-            'password'=>Hash::make('Rich$'),'activo'=>true,'IdDepto'=>5])->assignRole('inquilino');
+            'password'=>Hash::make('Rich$'),'activo'=>true,'IdDepto'=>5])->assignRole('Director');
 
         $this->crear(['DonShe', 'LaGuerre', 'Marlene', 'Primo', 'Burgos', 'Sheito'],'Admin',101,9991005002,5);
         $this->crear(['Anibal', 'Mario', 'Luis', 'Fabian', 'Jaciel', 'Yen'],'tecnico',201,9991003002,3);
+        $this->asignarSueldos();
     }
     private function crear($users, $rol, $IdIni, $telIni, $IdDepto)
     {
@@ -38,5 +39,15 @@ class UserSeeder extends Seeder
                 'adicionales' => ['sueldo' => 5000]
             ])->assignRole($rol);
         }
+    }
+    private function asignarSueldos()
+    {
+        User::each(function ($user) {
+            $adicionales = $user->adicionales ?? [];
+            $adicionales['sueldo'] = 5000;
+            $user->update([
+                'adicionales' => $adicionales
+            ]);
+        });
     }
 }

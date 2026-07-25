@@ -65,6 +65,16 @@ return new class extends Migration
             $table->date('fecha');
             $table->json('adicionales')->nullable();
         });
+        Schema::create('gastos', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('IdEfectuo')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('IdAutorizo')->nullable()->constrained('users')->nullOnDelete();
+            $table->enum('estatus', ['pendiente', 'autorizado', 'efectuado','cancelado'])->default('pendiente');
+            $table->decimal('monto',10,2)->nullable();
+            $table->date('fecha');
+            $table->string('foto');
+            $table->json('adicionales')->nullable();
+        });
         Schema::create('asistencias', function (Blueprint $table) {
             $table->id();
             $table->foreignId('IdUser')->constrained('users')->cascadeOnDelete();

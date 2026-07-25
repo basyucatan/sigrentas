@@ -40,6 +40,7 @@ Route::middleware("auth")->group(function () {
     Route::view('evidencias', 'livewire.evidencias.index');
     Route::view('control', 'livewire.control.index');
 
+    Route::view('gastos', 'livewire.gastos.index');
     Route::view('contratos', 'livewire.contratos.index');
     Route::view('contrato', 'livewire.contrato.index');
     Route::view('/contrato-imprimir', 'livewire.contrato.contrato');

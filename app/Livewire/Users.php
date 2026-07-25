@@ -27,16 +27,17 @@ public function render()
 {
     $keyWord = '%' . $this->keyWord . '%';
     $miNivelMaximo = auth()->user()->roles->max('nivel');
-    $users = User::whereHas('roles', function ($query) use ($miNivelMaximo) {
-        $query->where('nivel', '>=', $miNivelMaximo);
-    })
-    ->where(function ($query) use ($keyWord) {
-        $query->orWhere('name', 'LIKE', $keyWord)
-            ->orWhere('telefono', 'LIKE', $keyWord)
-            ->orWhere('email', 'LIKE', $keyWord);
-    })
-    ->paginate(10);
-    return view('livewire.users.view', compact(['users']));
+    $users = User::with('roles')
+        ->whereHas('roles', function ($query) use ($miNivelMaximo) {
+            $query->where('nivel', '>=', $miNivelMaximo);
+        })
+        ->where(function ($query) use ($keyWord) {
+            $query->where('name', 'LIKE', $keyWord)
+                ->orWhere('telefono', 'LIKE', $keyWord)
+                ->orWhere('email', 'LIKE', $keyWord);
+        })
+        ->paginate(10);
+    return view('livewire.users.view', compact('users'));
 }
 	
     public function cancel()

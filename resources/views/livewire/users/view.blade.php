@@ -19,6 +19,7 @@
                             <tr>
                                 <th>Nombre</th>
                                 <th>Telefono</th>
+                                <th>Rol</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -27,6 +28,7 @@
                                 <tr>
                                     <td>{{ $row->name }}</td>
                                     <td>{{ $row->telefono }}</td>
+                                    <td>{{ $row->roles->pluck('name')->join(', ') }}</td>
                                     <td width="60">
                                         <div class="d-flex gap-3">
                                             <button wire:click="edit({{ $row->id }})" class="bot botNaranja">
