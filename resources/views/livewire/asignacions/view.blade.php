@@ -40,7 +40,7 @@
                 @php $usuarioActivo = $usuarios->firstWhere('id', $IdUser); @endphp
                 <div class="cardPrin mb-3">
                     <div class="cardPrin-header">
-                        <span>Casas Asignadas a: {{ $usuarioActivo->name }}</span>
+                        <span>Casas Asignadas a: {{ $usuarioActivo?->name ?? '' }}</span>
                     </div>
                     <div class="cardPrin-body">
                         <div class="row g-2">

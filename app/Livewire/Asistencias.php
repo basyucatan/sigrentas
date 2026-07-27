@@ -13,51 +13,70 @@ class Asistencias extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $verModalAsistencia = false;
-    public $keyWord;
-    public $justificacion;
-    public $selectedId;
-    public $penaEntradaId;
-    public $penaSalidaId;
-    public $justificacionEntrada;
-    public $justificacionSalida;
-    public $todasLasCasas = [];
+    public $verModalAsistencia = false, $keyWord, $justificacion, $selectedId, 
+        $IdUser, $fotoTemp = null,
+        $penaEntradaId, $penaSalidaId, $justificacionEntrada, $justificacionSalida;
+    public $todasLasCasas = [], $users = [];
+    public function mount()
+    {
+        $this->users = Util::getArray('users', 'name');
+        $this->IdUser = Auth::id();
+    }
+public function setFlash($tipo, $mensaje)
+{
+    session()->flash($tipo, $mensaje);
+}
+public function setFotoBase64($base64String)
+{
+    $this->fotoTemp = $base64String;
+}
+
+public function quitarFoto()
+{
+    $this->fotoTemp = null;
+}
+    public function updatedIdUser()
+    {
+        $this->resetPage();
+    }
     public function updatedKeyWord()
     {
         $this->resetPage();
     }
     #[Computed]
     public function filteredAsistencias()
-    {
-        $keyWord = '%' . $this->keyWord . '%';
-        return Asistencia::where('IdUser', Auth::User()->id)
-            ->where(function ($query) use ($keyWord) {
-                $query->orWhere('IdUser', 'LIKE', $keyWord)
-                    ->orWhere('fecha', 'LIKE', $keyWord)
-                    ->orWhere('horaEnt', 'LIKE', $keyWord)
-                    ->orWhere('horaSal', 'LIKE', $keyWord)
-                    ->orWhere('ubiEnt', 'LIKE', $keyWord)
-                    ->orWhere('ubiSal', 'LIKE', $keyWord);
-            })
-            ->orderBy('fecha', 'desc')
-            ->orderBy('id', 'desc')
-            ->paginate(12);
-    }
-    public function render()
-    {
-        $userId = auth()->id() ?? 0;
-        $this->todasLasCasas = DB::table('casas')
-            ->leftJoin('asignacions', function($join) use ($userId) {
-                $join->on('casas.id', '=', 'asignacions.IdCasa')
-                     ->where('asignacions.IdUser', '=', $userId);
-            })
-            ->select('casas.id', 'casas.ubicacion', 'casas.casa', DB::raw('IF(asignacions.id IS NOT NULL, 1, 0) as esAsignada'))
-            ->get()
-            ->toArray();
-        return view('livewire.asistencias.view', [
-            'asistencias' => $this->filteredAsistencias,
-        ]);
-    }
+{
+    $keyWord = '%' . $this->keyWord . '%';
+    $idUsuarioConsultar = $this->IdUser ?: Auth::id();
+    return Asistencia::where('IdUser', $idUsuarioConsultar)
+        ->where(function ($query) use ($keyWord) {
+            $query->orWhere('IdUser', 'LIKE', $keyWord)
+                ->orWhere('fecha', 'LIKE', $keyWord)
+                ->orWhere('horaEnt', 'LIKE', $keyWord)
+                ->orWhere('horaSal', 'LIKE', $keyWord)
+                ->orWhere('ubiEnt', 'LIKE', $keyWord)
+                ->orWhere('ubiSal', 'LIKE', $keyWord);
+        })
+        ->orderBy('fecha', 'desc')
+        ->orderBy('id', 'desc')
+        ->paginate(12);
+}
+
+public function render()
+{
+    $userId = $this->IdUser ?: (auth()->id() ?? 0);
+    $this->todasLasCasas = DB::table('casas')
+        ->leftJoin('asignacions', function($join) use ($userId) {
+            $join->on('casas.id', '=', 'asignacions.IdCasa')
+                 ->where('asignacions.IdUser', '=', $userId);
+        })
+        ->select('casas.id', 'casas.ubicacion', 'casas.casa', DB::raw('IF(asignacions.id IS NOT NULL, 1, 0) as esAsignada'))
+        ->get()
+        ->toArray();
+    return view('livewire.asistencias.view', [
+        'asistencias' => $this->filteredAsistencias,
+    ]);
+}
     public function iniciarEdicion($id)
     {
         $asistencia = Asistencia::findOrFail($id);
@@ -158,160 +177,175 @@ class Asistencias extends Component
             'sueldoNeto' => $sueldoSemanalBase - $descuentoTotal
         ];
     }
-    public function registrarAsistencia($IdUser, $coordenadasActuales)
-    {
-        $configuracion = Util::getArrayJS('parametrosAsistencia');
-        $reglas = is_array($configuracion) ? reset($configuracion) : null;
-        if (empty($reglas)) {
-            session()->flash('error', 'No se encontraron los parámetros de asistencia configurados. Por favor, captúrelos antes de continuar.');
-            return;
-        }
-        $clavesObligatorias = [
-            'distanciaMaximaMetros',
-            'toleranciaMinutos',
-            'horaInicioEntrada',
-            'horaCorteEntrada',
-            'horaFinSalida',
-            'lunesViernesHoraEntrada',
-            'lunesViernesHoraSalida',
-            'sabadoHoraEntrada',
-            'sabadoHoraSalida'
-        ];
-        foreach ($clavesObligatorias as $clave) {
-            if (!isset($reglas[$clave])) {
-                session()->flash('error', 'Falta el parámetro obligatorio "' . $clave . '" en la configuración. Por favor, captúrelo para poder continuar.');
-                return;
-            }
-        }
-        $zonaHoraria = 'America/Mexico_City';
-        $fechaActual = Carbon::now($zonaHoraria)->toDateString();
-        $horaActual = Carbon::now($zonaHoraria)->toTimeString();
-        $esSabado = Carbon::now($zonaHoraria)->isSaturday();
-        $registroActual = Carbon::parse($fechaActual . ' ' . $horaActual, $zonaHoraria);
-        $horaInicioTurno = Carbon::parse($fechaActual . ' ' . $reglas['horaInicioEntrada'], $zonaHoraria);
-        $horaFinTurno = Carbon::parse($fechaActual . ' ' . $reglas['horaFinSalida'], $zonaHoraria);
-        if ($registroActual->lessThan($horaInicioTurno) || $registroActual->greaterThan($horaFinTurno)) {
-            session()->flash('error', 'El registro de asistencia no está disponible en este momento de acuerdo al horario establecido.');
-            return;
-        }
-        $asistenciaExistente = Asistencia::where('IdUser', $IdUser)
-            ->where('fecha', $fechaActual)
-            ->first();
-        $casasAsignadas = DB::table('asignacions')
-            ->join('casas', 'asignacions.IdCasa', '=', 'casas.id')
-            ->where('asignacions.IdUser', $IdUser)
-            ->select('casas.ubicacion')
-            ->get();
-        $ubicacionValida = false;
-        foreach ($casasAsignadas as $casa) {
-            if ($this->calcularDistancia($coordenadasActuales, $casa->ubicacion) <= $reglas['distanciaMaximaMetros']) {
-                $ubicacionValida = true;
-                break;
-            }
-        }
-        $esEntrada = false;
-        $horaCorteTurno = Carbon::parse($fechaActual . ' ' . $reglas['horaCorteEntrada'], $zonaHoraria);
-        if (!$asistenciaExistente) {
-            $esEntrada = true;
-        } elseif ($registroActual->greaterThan($horaCorteTurno) && $registroActual->lessThanOrEqualTo($horaFinTurno)) {
-            $esEntrada = false;
-        } elseif ($registroActual->greaterThanOrEqualTo($horaInicioTurno) && $registroActual->lessThanOrEqualTo($horaCorteTurno)) {
-            $esEntrada = true;
-        }
-        $horaEntradaRegla = $esSabado ? $reglas['sabadoHoraEntrada'] : $reglas['lunesViernesHoraEntrada'];
-        $horaSalidaRegla = $esSabado ? $reglas['sabadoHoraSalida'] : $reglas['lunesViernesHoraSalida'];
-        $tipoMensaje = 'mensaje';
-        if ($esEntrada) {
-            if ($asistenciaExistente && $asistenciaExistente->horaEnt !== '00:00:00' && !empty($asistenciaExistente->ubiEnt)) {
-                session()->flash('error', 'Ya existe entrada para el día de hoy.');
-                return;
-            }
-            $horaBaseEntrada = Carbon::parse($fechaActual . ' ' . $horaEntradaRegla, $zonaHoraria);
-            $horaLimiteEntrada = $horaBaseEntrada->copy()->addMinutes($reglas['toleranciaMinutos']);
-            $datosAdicionales = [];
-            $motivosPena = [];
-            $fueraDeHorario = $registroActual->greaterThan($horaLimiteEntrada);
-            if (!$ubicacionValida) {
-                $motivosPena[] = 'no estás cerca de alguna casa asignada';
-            }
-            if ($fueraDeHorario) {
-                $motivosPena[] = 'has llegado tarde';
-            }
-            if (!empty($motivosPena)) {
-                $datosAdicionales['penaEntradaId'] = 1;
-                if (!empty($this->justificacion)) {
-                    $datosAdicionales['justificacionEntrada'] = $this->justificacion;
-                }
-                $mensajeAviso = 'Penalización 1 día, ' . implode(' y ', $motivosPena) . '.';
-                $tipoMensaje = 'error';
-            } else {
-                $mensajeAviso = 'Entrada registrada correctamente.';
-            }
-            $inicioSemana = Carbon::parse($fechaActual, $zonaHoraria)->startOfWeek()->toDateString();
-            $finSemana = Carbon::parse($fechaActual, $zonaHoraria)->endOfWeek()->toDateString();
-            $tieneRegistroSemana = Asistencia::where('IdUser', $IdUser)
-                ->whereBetween('fecha', [$inicioSemana, $finSemana])
-                ->exists();
-            if (!$tieneRegistroSemana) {
-                $user = User::find($IdUser);
-                if ($user && isset($user->adicionales['sueldo'])) {
-                    $datosAdicionales['sueldoSemanalBase'] = floatval($user->adicionales['sueldo']);
-                }
-            }
-            Asistencia::create([
-                'IdUser' => $IdUser,
-                'fecha' => $fechaActual,
-                'horaEnt' => $horaActual,
-                'horaSal' => '00:00:00',
-                'ubiEnt' => $coordenadasActuales,
-                'ubiSal' => '',
-                'adicionales' => !empty($datosAdicionales) ? $datosAdicionales : null,
-            ]);
-            $this->justificacion = '';
-            session()->flash($tipoMensaje, $mensajeAviso);
-            return;
-        } else {
-            if (!$asistenciaExistente) {
-                session()->flash('error', 'No hay registro previo el día de hoy.');
-                return;
-            }
-            if ($asistenciaExistente->horaSal !== '00:00:00' && !empty($asistenciaExistente->ubiSal)) {
-                session()->flash('error', 'Hay registro previo de salida');
-                return;
-            }
-            $horaBaseSalida = Carbon::parse($fechaActual . ' ' . $horaSalidaRegla, $zonaHoraria);
-            $horaMinimaSalida = $horaBaseSalida->copy()->subMinutes($reglas['toleranciaMinutos']);
-            $datosAdicionales = $asistenciaExistente->adicionales ?? [];
-            if (is_string($datosAdicionales)) {
-                $datosAdicionales = json_decode($datosAdicionales, true) ?? [];
-            }
-            $fueraDeHorarioSalida = $registroActual->lessThan($horaMinimaSalida);
-            if (!$ubicacionValida) {
-                $datosAdicionales['penaSalidaId'] = 1;
-                $mensajeAviso = 'Penalización 1 día, No estás cerca de alguna casa asignada.';
-                $tipoMensaje = 'error';
-            } elseif ($fueraDeHorarioSalida) {
-                $datosAdicionales['penaSalidaId'] = 2;
-                $mensajeAviso = 'Penalización de medio día salida antes de tiempo.';
-                $tipoMensaje = 'error';
-            } else {
-                $mensajeAviso = 'Salida registrada correctamente.';
-            }
-            if (!$ubicacionValida || $fueraDeHorarioSalida) {
-                if (!empty($this->justificacion)) {
-                    $datosAdicionales['justificacionSalida'] = $this->justificacion;
-                }
-            }
-            $asistenciaExistente->update([
-                'horaSal' => $horaActual,
-                'ubiSal' => $coordenadasActuales,
-                'adicionales' => !empty($datosAdicionales) ? $datosAdicionales : null,
-            ]);
-            $this->justificacion = '';
-            session()->flash($tipoMensaje, $mensajeAviso);
+public function registrarAsistencia($IdUser, $coordenadasActuales)
+{
+    $configuracion = Util::getArrayJS('parametrosAsistencia');
+    $reglas = is_array($configuracion) ? reset($configuracion) : null;
+    if (empty($reglas)) {
+        session()->flash('error', 'No se encontraron los parámetros de asistencia configurados. Por favor, captúrelos antes de continuar.');
+        return;
+    }
+    $clavesObligatorias = [
+        'distanciaMaximaMetros',
+        'toleranciaMinutos',
+        'horaInicioEntrada',
+        'horaCorteEntrada',
+        'horaFinSalida',
+        'lunesViernesHoraEntrada',
+        'lunesViernesHoraSalida',
+        'sabadoHoraEntrada',
+        'sabadoHoraSalida'
+    ];
+    foreach ($clavesObligatorias as $clave) {
+        if (!isset($reglas[$clave])) {
+            session()->flash('error', 'Falta el parámetro obligatorio "' . $clave . '" en la configuración. Por favor, captúrelo para poder continuar.');
             return;
         }
     }
+    $zonaHoraria = 'America/Mexico_City';
+    $fechaActual = Carbon::now($zonaHoraria)->toDateString();
+    $horaActual = Carbon::now($zonaHoraria)->toTimeString();
+    $esSabado = Carbon::now($zonaHoraria)->isSaturday();
+    $registroActual = Carbon::parse($fechaActual . ' ' . $horaActual, $zonaHoraria);
+    $horaInicioTurno = Carbon::parse($fechaActual . ' ' . $reglas['horaInicioEntrada'], $zonaHoraria);
+    $horaFinTurno = Carbon::parse($fechaActual . ' ' . $reglas['horaFinSalida'], $zonaHoraria);
+    if ($registroActual->lessThan($horaInicioTurno) || $registroActual->greaterThan($horaFinTurno)) {
+        session()->flash('error', 'El registro de asistencia no está disponible en este momento de acuerdo al horario establecido.');
+        return;
+    }
+    $asistenciaExistente = Asistencia::where('IdUser', $IdUser)
+        ->where('fecha', $fechaActual)
+        ->first();
+    $casasAsignadas = DB::table('asignacions')
+        ->join('casas', 'asignacions.IdCasa', '=', 'casas.id')
+        ->where('asignacions.IdUser', $IdUser)
+        ->select('casas.ubicacion')
+        ->get();
+    $ubicacionValida = false;
+    foreach ($casasAsignadas as $casa) {
+        if ($this->calcularDistancia($coordenadasActuales, $casa->ubicacion) <= $reglas['distanciaMaximaMetros']) {
+            $ubicacionValida = true;
+            break;
+        }
+    }
+    $esEntrada = false;
+    $horaCorteTurno = Carbon::parse($fechaActual . ' ' . $reglas['horaCorteEntrada'], $zonaHoraria);
+    if (!$asistenciaExistente) {
+        $esEntrada = true;
+    } elseif ($registroActual->greaterThan($horaCorteTurno) && $registroActual->lessThanOrEqualTo($horaFinTurno)) {
+        $esEntrada = false;
+    } elseif ($registroActual->greaterThanOrEqualTo($horaInicioTurno) && $registroActual->lessThanOrEqualTo($horaCorteTurno)) {
+        $esEntrada = true;
+    }
+    $horaEntradaRegla = $esSabado ? $reglas['sabadoHoraEntrada'] : $reglas['lunesViernesHoraEntrada'];
+    $horaSalidaRegla = $esSabado ? $reglas['sabadoHoraSalida'] : $reglas['lunesViernesHoraSalida'];
+    $tipoMensaje = 'mensaje';
+
+    // Guardado opcional de la foto capturada o pegada
+    $nombreFoto = null;
+    if ($this->fotoTemp) {
+        $nombreFoto = Util::guardarArchivo($this->fotoTemp, "asistencia_" . $IdUser . "_" . time(), "asistencias", true);
+    }
+
+    if ($esEntrada) {
+        if ($asistenciaExistente && $asistenciaExistente->horaEnt !== '00:00:00' && !empty($asistenciaExistente->ubiEnt)) {
+            session()->flash('error', 'Ya existe entrada para el día de hoy.');
+            return;
+        }
+        $horaBaseEntrada = Carbon::parse($fechaActual . ' ' . $horaEntradaRegla, $zonaHoraria);
+        $horaLimiteEntrada = $horaBaseEntrada->copy()->addMinutes($reglas['toleranciaMinutos']);
+        $datosAdicionales = [];
+        $motivosPena = [];
+        $fueraDeHorario = $registroActual->greaterThan($horaLimiteEntrada);
+        if (!$ubicacionValida) {
+            $motivosPena[] = 'no estás cerca de alguna casa asignada';
+        }
+        if ($fueraDeHorario) {
+            $motivosPena[] = 'has llegado tarde';
+        }
+        if (!empty($motivosPena)) {
+            $datosAdicionales['penaEntradaId'] = 1;
+            if (!empty($this->justificacion)) {
+                $datosAdicionales['justificacionEntrada'] = $this->justificacion;
+            }
+            $mensajeAviso = 'Penalización 1 día, ' . implode(' y ', $motivosPena) . '.';
+            $tipoMensaje = 'error';
+        } else {
+            $mensajeAviso = 'Entrada registrada correctamente.';
+        }
+        if ($nombreFoto) {
+            $datosAdicionales['foto'] = $nombreFoto;
+        }
+        $inicioSemana = Carbon::parse($fechaActual, $zonaHoraria)->startOfWeek()->toDateString();
+        $finSemana = Carbon::parse($fechaActual, $zonaHoraria)->endOfWeek()->toDateString();
+        $tieneRegistroSemana = Asistencia::where('IdUser', $IdUser)
+            ->whereBetween('fecha', [$inicioSemana, $finSemana])
+            ->exists();
+        if (!$tieneRegistroSemana) {
+            $user = User::find($IdUser);
+            if ($user && isset($user->adicionales['sueldo'])) {
+                $datosAdicionales['sueldoSemanalBase'] = floatval($user->adicionales['sueldo']);
+            }
+        }
+        Asistencia::create([
+            'IdUser' => $IdUser,
+            'fecha' => $fechaActual,
+            'horaEnt' => $horaActual,
+            'horaSal' => '00:00:00',
+            'ubiEnt' => $coordenadasActuales,
+            'ubiSal' => '',
+            'adicionales' => !empty($datosAdicionales) ? $datosAdicionales : null,
+        ]);
+        $this->justificacion = '';
+        $this->fotoTemp = null;
+        session()->flash($tipoMensaje, $mensajeAviso);
+        return;
+    } else {
+        if (!$asistenciaExistente) {
+            session()->flash('error', 'No hay registro previo el día de hoy.');
+            return;
+        }
+        if ($asistenciaExistente->horaSal !== '00:00:00' && !empty($asistenciaExistente->ubiSal)) {
+            session()->flash('error', 'Hay registro previo de salida');
+            return;
+        }
+        $horaBaseSalida = Carbon::parse($fechaActual . ' ' . $horaSalidaRegla, $zonaHoraria);
+        $horaMinimaSalida = $horaBaseSalida->copy()->subMinutes($reglas['toleranciaMinutos']);
+        $datosAdicionales = $asistenciaExistente->adicionales ?? [];
+        if (is_string($datosAdicionales)) {
+            $datosAdicionales = json_decode($datosAdicionales, true) ?? [];
+        }
+        $fueraDeHorarioSalida = $registroActual->lessThan($horaMinimaSalida);
+        if (!$ubicacionValida) {
+            $datosAdicionales['penaSalidaId'] = 1;
+            $mensajeAviso = 'Penalización 1 día, No estás cerca de alguna casa asignada.';
+            $tipoMensaje = 'error';
+        } elseif ($fueraDeHorarioSalida) {
+            $datosAdicionales['penaSalidaId'] = 2;
+            $mensajeAviso = 'Penalización de medio día salida antes de tiempo.';
+            $tipoMensaje = 'error';
+        } else {
+            $mensajeAviso = 'Salida registrada correctamente.';
+        }
+        if (!$ubicacionValida || $fueraDeHorarioSalida) {
+            if (!empty($this->justificacion)) {
+                $datosAdicionales['justificacionSalida'] = $this->justificacion;
+            }
+        }
+        if ($nombreFoto) {
+            $datosAdicionales['foto'] = $nombreFoto;
+        }
+        $asistenciaExistente->update([
+            'horaSal' => $horaActual,
+            'ubiSal' => $coordenadasActuales,
+            'adicionales' => !empty($datosAdicionales) ? $datosAdicionales : null,
+        ]);
+        $this->justificacion = '';
+        $this->fotoTemp = null;
+        session()->flash($tipoMensaje, $mensajeAviso);
+        return;
+    }
+}
     private function calcularDistancia($coordenadasOrigen, $coordenadasDestino)
     {
         $origen = explode(',', $coordenadasOrigen);
