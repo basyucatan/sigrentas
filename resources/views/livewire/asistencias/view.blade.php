@@ -10,7 +10,7 @@
                 <div class="cardSec mb-3">
                     <div class="cardSec-header">
                         <span>Registro</span>
-                        @can('admin')
+                        @can('director')
                             <div>
                                 <select wire:model.live="IdUser" class="inpSolo">
                                     @foreach ($this->users as $key => $value)
@@ -89,7 +89,7 @@
                                 title="Capturar / Subir Foto (o Ctrl+V)">
                                 <i class="bi bi-camera-fill"></i>
                             </button>
-                            @can('admin')
+                            @can('director')
                                 <button class="bot botVerde botChico" wire:click="imprimirNomina"
                                     wire:loading.attr="disabled" wire:target="imprimirNomina" title="Imprimir nómina">
                                     <span wire:loading.remove wire:target="imprimirNomina"><i

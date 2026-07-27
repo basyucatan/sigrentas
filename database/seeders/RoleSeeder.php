@@ -24,8 +24,10 @@ class RoleSeeder extends Seeder
             ->syncRoles([$role1, $role2, $role3, $role4, $role5, $role6, $role7]);           
         Permission::create(['name' => 'adminMax'])
             ->syncRoles([$role1]); // Solo SuperAdmin
-        Permission::create(['name' => 'admin'])
+        Permission::create(['name' => 'director'])
             ->syncRoles([$role1, $role2]); // Solo SuperAdmin y Admin
+        Permission::create(['name' => 'admin'])
+            ->syncRoles([$role1, $role2, $role3]); // Solo SuperAdmin y Admin
         Permission::create(['name' => 'tecnico'])
             ->syncRoles([$role4]); //Tecnico
         Permission::create(['name' => 'inquilino'])
