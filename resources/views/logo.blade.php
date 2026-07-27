@@ -1,6 +1,6 @@
 <style>
     .contenedorLogo {
-        height: 350px;
+        height: 60vh;
         display: flex;
         justify-content: center;
         align-items: center;
