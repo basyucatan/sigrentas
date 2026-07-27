@@ -35,6 +35,7 @@
                     <li class="nav-item custom-dropdown-item">
                         <a href="#" class="nav-link menu-trigger">💼 Admin</a>
                         <ul class="submenu d-none list-unstyled ps-2 border-start">
+                            <li><a href="{{ url('/asistencias') }}" class="nav-link small">🕒 Checador</a></li>
                             <li><a href="{{ url('/control') }}" class="nav-link small">✨ Control</a></li>
                             <li><a href="{{ url('/contratos') }}" class="nav-link small">📄 Contratos</a></li>
                         </ul>                        
