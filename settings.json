@@ -1,6 +1,6 @@
 {
   "parametrosAsistencia":[
-    {"id":1,"distanciaMaximaMetros":201,"toleranciaMinutos":10,"horaInicioEntrada":"06:00:00","horaCorteEntrada":"11:00:00","horaFinSalida":"23:59:00","lunesViernesHoraEntrada":"08:30:00","lunesViernesHoraSalida":"19:00:00","sabadoHoraEntrada":"09:00:00","sabadoHoraSalida":"13:00:00"}
+    {"id":1,"distanciaMaximaMetros":201,"toleranciaMinutos":10,"horaInicioEntrada":"06:00:00","horaCorteEntrada":"11:00:00","horaFinSalida":"20:00:00","lunesViernesHoraEntrada":"08:30:00","lunesViernesHoraSalida":"19:00:00","sabadoHoraEntrada":"09:00:00","sabadoHoraSalida":"13:00:00"}
   ],
 
   "datosFacturacion":[

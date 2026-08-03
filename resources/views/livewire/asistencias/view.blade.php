@@ -10,7 +10,7 @@
                 <div class="cardSec mb-3">
                     <div class="cardSec-header">
                         <span>Registro</span>
-                        {{-- @can('director') --}}
+                        @if(auth()->user()->roles->min('nivel') < 3)
                             <div>
                                 <select wire:model.live="IdUser" class="inpSolo">
                                     @foreach ($this->users as $key => $value)
@@ -18,7 +18,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                        {{-- @endcan --}}
+                        @endif
                     </div>
                     <div class="cardSec-body text-center" x-data="{
                         init() {
@@ -55,7 +55,6 @@
                             <textarea id="justificacion" class="inpBase w-100" rows="2"
                                 placeholder="Escribe aquí el motivo en caso de retraso o incidencia..." wire:model="justificacion"></textarea>
                         </div>
-
                         @if ($fotoTemp)
                             <div class="mb-2 position-relative d-inline-block">
                                 <img src="{{ $fotoTemp }}" class="img-thumbnail" style="max-height: 120px;"
@@ -65,12 +64,11 @@
                                     wire:click="quitarFoto" style="line-height: 1; padding: 2px 6px;">&times;</button>
                             </div>
                         @endif
-
                         <input type="file" id="inpCamaraFoto" accept="image/*" capture="environment"
                             style="display: none;" onchange="procesarImagenInput(this)">
 
                         <div class="d-flex gap-2 justify-content-center align-items-center">
-                            <button id="btnChecada" type="button" class="bot botVerde px-3 py-2"
+                            <button id="btnChecada" type="button" class="bot botVerde botChico"
                                 onclick="obtenerUbicacionYRegistrar()" wire:loading.attr="disabled"
                                 wire:target="registrarAsistencia">
                                 <span id="textoChecada" wire:loading.remove wire:target="registrarAsistencia">
@@ -89,14 +87,15 @@
                                 title="Capturar / Subir Foto (o Ctrl+V)">
                                 <i class="bi bi-camera-fill"></i>
                             </button>
-                            {{-- @can('director') --}}
+                            @if(auth()->user()->roles->min('nivel') < 3)
                                 <button class="bot botVerde botChico" wire:click="imprimirNomina"
-                                    wire:loading.attr="disabled" wire:target="imprimirNomina" title="Imprimir nómina">
-                                    <span wire:loading.remove wire:target="imprimirNomina"><i
-                                            class="bi bi-printer"></i></span>
+                                    wire:loading.attr="disabled" wire:target="imprimirNomina" 
+                                    title="Imprimir nómina">
+                                    <span wire:loading.remove wire:target="imprimirNomina">
+                                        <i class="bi bi-printer"></i></span>
                                     <span wire:loading wire:target="imprimirNomina">⏳</span>
                                 </button>
-                            {{-- @endcan --}}
+                            @endif
                         </div>
                     </div>
                 </div>
