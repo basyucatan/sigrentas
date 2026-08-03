@@ -11,6 +11,7 @@ class UserSeeder extends Seeder
         $this->crear(['Rich'],'director',2,9991005001,1);
         $this->crear(['DonShe', 'LaGuerre', 'Marlene', 'Primo', 'Burgos', 'Sheito'],'Admin',101,9991005002,5);
         $this->crear(['Anibal', 'Mario', 'Luis', 'Fabian', 'Jaciel', 'Yen'],'tecnico',201,9991003002,3);
+        $this->crear(['Inquilino1'],'inquilino',501,9991004001,6);
         $this->asignarSueldos();
     }
     private function crear($users, $rol, $IdIni, $telIni, $IdDepto)

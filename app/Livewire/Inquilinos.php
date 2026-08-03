@@ -6,7 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Inquilino;
 use Livewire\Attributes\Computed;
-use App\Models\{Util};
+use App\Models\{Util, User};
 use Illuminate\Support\Facades\DB;
 
 class Inquilinos extends Component
@@ -69,7 +69,7 @@ class Inquilinos extends Component
         Inquilino::updateOrCreate(
 			['id' => $this->selected_id],
 			[
-				'IdUser' => $this-> IdUser ?? 6,
+				'IdUser' => $this->IdUser ?? User::role('inquilino')->orderBy('id')->value('id'),
 				'inquilino' => $this-> inquilino,
 				'telefono' => $this-> telefono,
 				'generales' => $this-> generales

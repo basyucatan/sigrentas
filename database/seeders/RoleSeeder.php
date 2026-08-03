@@ -15,6 +15,6 @@ class RoleSeeder extends Seeder
         $role3 = Role::firstOrCreate(['name' => 'gerente'],    ['nivel' => 3]);
         $role4 = Role::firstOrCreate(['name' => 'admin'],      ['nivel' => 4]);
         $role6 = Role::firstOrCreate(['name' => 'tecnico'],    ['nivel' => 5]);
-        $role7 = Role::firstOrCreate(['name' => 'operador'],   ['nivel' => 6]);
+        $role7 = Role::firstOrCreate(['name' => 'inquilino'],   ['nivel' => 6]);
     }
 }
