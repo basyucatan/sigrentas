@@ -18,6 +18,12 @@ class User extends Authenticatable
 
     protected $fillable = ['name','telefono','IdBodega','IdDepto','email','password','adicionales'];   
     protected $casts = ['adicionales' => 'array'];
+    public function scopeNivelMax($query, $nivel)
+    {
+        return $query->whereHas('roles', function ($query) use ($nivel) {
+            $query->where('nivel', '<=', $nivel);
+        });
+    }
     public function Depto()
     {
         return $this->hasOne('App\Models\Depto', 'id', 'IdDepto');

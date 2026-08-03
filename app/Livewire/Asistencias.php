@@ -19,7 +19,10 @@ class Asistencias extends Component
     public $todasLasCasas = [], $users = [];
     public function mount()
     {
-        $this->users = Util::getArray('users', 'name');
+        $this->users = User::nivelMax(5)
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
         $this->IdUser = Auth::id();
     }
 public function setFlash($tipo, $mensaje)

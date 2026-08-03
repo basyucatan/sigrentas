@@ -70,9 +70,11 @@
                                 <a href="#" class="nav-link menu-trigger">🧰 Configuración</a>
                                 <ul class="submenu d-none list-unstyled ps-3 border-start">
                                     <li><a href="{{ url('/users') }}" class="nav-link small">🧑‍💻 Usuarios</a></li>
-                                    @if(auth()->user()->roles->min('nivel') < 3)
-                                    <li><a href="{{ url('/catalogos') }}" class="nav-link small">🧩 Básicos</a></li>
-                                    @endif
+                                    @auth
+                                        @if(auth()->user()->roles->min('nivel') < 3)
+                                            <li><a href="{{ url('/catalogos') }}" class="nav-link small">🧩 Básicos</a></li>
+                                        @endif
+                                    @endauth
                                 </ul>
                             </li>
                         </ul>
