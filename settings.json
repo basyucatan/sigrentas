@@ -4,6 +4,6 @@
   ],
 
   "datosFacturacion":[
-    {"id":1,"razonSocial":"PRACTISUR SA DE CV","RFC":"PRA-170313-2A4","direccion":"CALLE 14 # 257 X 5 Y 7, COLONIA VISTA ALEGRE NORTE C.P 97130","ciudad":"MÉRIDA, YUCATÁN, MÉXICO","email":"practisur2018@gmail.com","factorIva":"0.16"}
+    {"id":1,"razonSocial":"EMPRESA X SA DE CV","factorIva":"0.16"}
   ]
 }
