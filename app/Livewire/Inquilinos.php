@@ -15,8 +15,11 @@ class Inquilinos extends Component
 	protected $paginationTheme = 'bootstrap';
     public $verModalInquilino=false, $selected_id, $keyWord, $IdUser, $inquilino, $telefono, $generales;
 	
-	public $adicionales = [];
-    public function mount(){}
+	public $adicionales = [], $users =[];
+    public function mount()
+    {
+        $this->users = User::role('inquilino')->orderBy('name')->pluck('name', 'id')->toArray();
+    }
     public function updatedKeyWord(){$this->resetPage();}
     #[Computed]
 	public function filteredInquilinos()
@@ -45,7 +48,7 @@ class Inquilinos extends Component
     }
     public function resetInput()
     {
-        $this->resetExcept('keyWord');
+        $this->resetExcept('keyWord', 'users');
     }
     public function edit($id)
     {

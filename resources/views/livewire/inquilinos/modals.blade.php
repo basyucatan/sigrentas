@@ -12,13 +12,14 @@
                                 @if ($selected_id)
                                     <input type="hidden" wire:model="selected_id">
                                 @endif
-
-                                <div class="col-md-6">
-                                    <label class="etiBase">Iduser (6)</label>
-                                    <input wire:model="IdUser" type="text" class="inpBase" onfocus="this.select()">
-                                    @error('IdUser')
-                                        <span class="error text-danger">{{ $message }}</span>
-                                    @enderror
+                                <div class="col-6">
+                                    <label class="etiBase">Usuario</label>
+                                    <select wire:model="IdUser" class="form-select inpSolo">
+                                        <option value=""></option>
+                                        @foreach ($users as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="etiBase">Inquilino</label>
