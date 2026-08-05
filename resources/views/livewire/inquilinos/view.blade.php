@@ -40,7 +40,7 @@
                             <tbody>
                                 @forelse($inquilinos as $row)
                                     <tr>
-                                        <td>{{ $row->User->name }}</td>
+                                        <td>{{ $row->User->name ?? ''}}</td>
                                         <td>{{ $row->inquilino }}</td>
                                         <td>{{ $row->telefono }}</td>
                                         <td title="{{ $row->generales }}">{{ Str::limit($row->generales ?? '', 60, '…') }}</td>

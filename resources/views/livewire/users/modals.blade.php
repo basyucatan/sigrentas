@@ -77,7 +77,7 @@
     </div>
 @endif
 
-@if ($verModalRol && $this->puedeGestionarEstructura)
+@if ($verModalRol && auth()->user()->canEstructurar)
     <div class="modal-overlay" x-data="{}" x-init="dragModal($el)">
         <div class="modal-dialog" style="width: 70%;">
             <div class="modal-content">
@@ -127,7 +127,7 @@
     </div>
 @endif
 
-@if ($verModalPermiso && $this->puedeGestionarEstructura)
+@if ($verModalPermiso && auth()->user()->canEstructurar)
     <div class="modal-overlay" x-data="{}" x-init="dragModal($el)">
         <div class="modal-dialog" style="width: 50%;">
             <div class="modal-content">

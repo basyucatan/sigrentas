@@ -25,63 +25,65 @@
                 </form>
             @endguest
         </div>
-        <div class="offcanvas offcanvas-start cardSec" tabindex="-1" id="offcanvasNavbar">
-            <div class="cardSec-header">
-                <span class="fs-5">Menú</span>
-                <button type="button" class="bot botNegro" data-bs-dismiss="offcanvas">X</button>
+        @if(auth()->check() && auth()->user()->canMenu)
+            <div class="offcanvas offcanvas-start cardSec" tabindex="-1" id="offcanvasNavbar">
+                <div class="cardSec-header">
+                    <span class="fs-5">Menú</span>
+                    <button type="button" class="bot botNegro" data-bs-dismiss="offcanvas">X</button>
+                </div>
+                <div class="cardSec-body">
+                    <ul class="navbar-nav pe-3">
+                        <li class="nav-item custom-dropdown-item">
+                            <a href="#" class="nav-link menu-trigger">💼 Admin</a>
+                            <ul class="submenu d-none list-unstyled ps-2 border-start">
+                                <li><a href="{{ url('/asistencias') }}" class="nav-link small">🕒 Checador</a></li>
+                                <li><a href="{{ url('/control') }}" class="nav-link small">✨ Control</a></li>
+                                <li><a href="{{ url('/contratos') }}" class="nav-link small">📄 Contratos</a></li>
+                            </ul>                        
+                        </li>
+                    </ul>                
+                    <ul class="navbar-nav pe-3">
+                        <li class="nav-item custom-dropdown-item">
+                            <a href="#" class="nav-link menu-trigger">🔗 Catálogos</a>
+                            <ul class="submenu d-none list-unstyled ps-3">
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link menu-trigger">🏠 Organización</a>
+                                    <ul class="submenu d-none list-unstyled ps-3 border-start">
+                                        <li><a href="{{ url('/arbolcasas') }}" class="nav-link small">🌳 Árbol de Casas</a></li>
+                                        <li><a href="{{ url('/casas') }}" class="nav-link small">🏡 Casas</a></li>
+                                        <li><a href="{{ url('/cuartos') }}" class="nav-link small">🚪 Cuartos</a></li>
+                                        <li><a href="{{ url('/propietarios') }}" class="nav-link small">👥 Propietarios</a></li>
+                                        <li><a href="{{ url('/inquilinos') }}" class="nav-link small">👥 Inquilinos</a></li>
+                                        <li><a href="{{ url('/asignacions') }}" class="nav-link small">📋 Asignaciones</a></li>
+                                        <li><a href="{{ url('/contrato') }}" class="nav-link small">📄 Firma</a></li>
+                                        <li><a href="{{ url('/evidencias') }}" class="nav-link small">📷 Evidencias</a></li>
+                                        <li><a href="{{ url('/ticketssegs') }}" class="nav-link small">🎫 Seguimiento Tickets</a></li>
+                                    </ul>
+                                    <a href="#" class="nav-link menu-trigger">🏠 Generales</a>
+                                    <ul class="submenu d-none list-unstyled ps-3 border-start">
+                                        <li><a href="{{ url('/fallas') }}" class="nav-link small">🚗 Tipos de Falla</a></li>
+                                        <li><a href="{{ url('/vehiculos') }}" class="nav-link small">🚗 Vehículos</a></li>
+                                        <li><a href="{{ url('/tecnicos') }}" class="nav-link small">🧰 Técnicos</a></li>
+                                        <li><a href="{{ url('/prioridads') }}" class="nav-link small">🚨 Prioridades</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link menu-trigger">🧰 Configuración</a>
+                                    <ul class="submenu d-none list-unstyled ps-3 border-start">
+                                        <li><a href="{{ url('/users') }}" class="nav-link small">🧑‍💻 Usuarios</a></li>
+                                        @auth
+                                            @if(auth()->user()->roles->min('nivel') < 3)
+                                                <li><a href="{{ url('/catalogos') }}" class="nav-link small">🧩 Básicos</a></li>
+                                            @endif
+                                        @endauth
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>                              
+                </div>
             </div>
-            <div class="cardSec-body">
-                <ul class="navbar-nav pe-3">
-                    <li class="nav-item custom-dropdown-item">
-                        <a href="#" class="nav-link menu-trigger">💼 Admin</a>
-                        <ul class="submenu d-none list-unstyled ps-2 border-start">
-                            <li><a href="{{ url('/asistencias') }}" class="nav-link small">🕒 Checador</a></li>
-                            <li><a href="{{ url('/control') }}" class="nav-link small">✨ Control</a></li>
-                            <li><a href="{{ url('/contratos') }}" class="nav-link small">📄 Contratos</a></li>
-                        </ul>                        
-                    </li>
-                </ul>                
-                <ul class="navbar-nav pe-3">
-                    <li class="nav-item custom-dropdown-item">
-                        <a href="#" class="nav-link menu-trigger">🔗 Catálogos</a>
-                        <ul class="submenu d-none list-unstyled ps-3">
-                            <li class="nav-item">
-                                <a href="#" class="nav-link menu-trigger">🏠 Organización</a>
-                                <ul class="submenu d-none list-unstyled ps-3 border-start">
-                                    <li><a href="{{ url('/arbolcasas') }}" class="nav-link small">🌳 Árbol de Casas</a></li>
-                                    <li><a href="{{ url('/casas') }}" class="nav-link small">🏡 Casas</a></li>
-                                    <li><a href="{{ url('/cuartos') }}" class="nav-link small">🚪 Cuartos</a></li>
-                                    <li><a href="{{ url('/propietarios') }}" class="nav-link small">👥 Propietarios</a></li>
-                                    <li><a href="{{ url('/inquilinos') }}" class="nav-link small">👥 Inquilinos</a></li>
-                                    <li><a href="{{ url('/asignacions') }}" class="nav-link small">📋 Asignaciones</a></li>
-                                    <li><a href="{{ url('/contrato') }}" class="nav-link small">📄 Firma</a></li>
-                                    <li><a href="{{ url('/evidencias') }}" class="nav-link small">📷 Evidencias</a></li>
-                                    <li><a href="{{ url('/ticketssegs') }}" class="nav-link small">🎫 Seguimiento Tickets</a></li>
-                                </ul>
-                                <a href="#" class="nav-link menu-trigger">🏠 Generales</a>
-                                <ul class="submenu d-none list-unstyled ps-3 border-start">
-                                    <li><a href="{{ url('/fallas') }}" class="nav-link small">🚗 Tipos de Falla</a></li>
-                                    <li><a href="{{ url('/vehiculos') }}" class="nav-link small">🚗 Vehículos</a></li>
-                                    <li><a href="{{ url('/tecnicos') }}" class="nav-link small">🧰 Técnicos</a></li>
-                                    <li><a href="{{ url('/prioridads') }}" class="nav-link small">🚨 Prioridades</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link menu-trigger">🧰 Configuración</a>
-                                <ul class="submenu d-none list-unstyled ps-3 border-start">
-                                    <li><a href="{{ url('/users') }}" class="nav-link small">🧑‍💻 Usuarios</a></li>
-                                    @auth
-                                        @if(auth()->user()->roles->min('nivel') < 3)
-                                            <li><a href="{{ url('/catalogos') }}" class="nav-link small">🧩 Básicos</a></li>
-                                        @endif
-                                    @endauth
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>                              
-            </div>
-        </div>
+        @endif
     </div>
 </nav>
 <style>

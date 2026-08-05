@@ -446,8 +446,12 @@
     <div class="parrafoCenter resaltar">
         “LA PARTE OCUPANTE”<br><br>
         <span class="parrafoCenter resaltar">
-            ____________________________________________
-        </span><br>
+            @if(isset($rutaFirma) && $rutaFirma)
+                <img src="{{ $rutaFirma }}" style="max-width: 250px; max-height: 80px; display: block; margin: 0 auto;"><br>
+            @else
+                ____________________________________________<br>
+            @endif
+        </span>
         <span class="parrafoCenter resaltar">
             {!! evaluar($contrato->inquilino?->inquilino, 'inquilino') !!}
         </span>

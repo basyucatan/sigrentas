@@ -4,13 +4,13 @@
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <div class="cardPrin-body">
+    <div class="cardPrin-body" style="max-height:90vh;">
         <div class="row g-3">
             <div class="col-12 col-md-4">
-                <div class="cardSec mb-3">
+                <div class="cardSec mb-1">
                     <div class="cardSec-header">
                         <span>Registro</span>
-                        @if(auth()->user()->roles->min('nivel') < 3)
+                        @if (auth()->user()->roles->min('nivel') < 3)
                             <div>
                                 <select wire:model.live="IdUser" class="inpSolo">
                                     @foreach ($this->users as $key => $value)
@@ -20,7 +20,7 @@
                             </div>
                         @endif
                     </div>
-                    <div class="cardSec-body text-center" x-data="{
+                    <div class="cardSec-body" x-data="{
                         init() {
                             window.addEventListener('paste', e => {
                                 if (e.clipboardData && e.clipboardData.files.length > 0) {
@@ -50,22 +50,30 @@
                                     aria-label="Close"></button>
                             </div>
                         @endif
-                        <div class="mb-3 text-start">
+                        <div class="text-start">
                             <label for="justificacion" class="etiBase">Justificación / Observación</label>
                             <textarea id="justificacion" class="inpBase w-100" rows="2"
                                 placeholder="Escribe aquí el motivo en caso de retraso o incidencia..." wire:model="justificacion"></textarea>
                         </div>
-                        @if ($fotoTemp)
-                            <div class="mb-2 position-relative d-inline-block">
-                                <img src="{{ $fotoTemp }}" class="img-thumbnail" style="max-height: 120px;"
-                                    alt="Previsualización">
-                                <button type="button"
-                                    class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle"
-                                    wire:click="quitarFoto" style="line-height: 1; padding: 2px 6px;">&times;</button>
-                            </div>
-                        @endif
+                        <div wire:loading wire:target="setFotoBase64" class="text-center my-2">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            <div class="small text-muted mt-1">Subiendo imagen...</div>
+                        </div>
+                        <div wire:loading.remove wire:target="setFotoBase64">
+                            @if ($fotoTemp)
+                                <div class="position-relative d-inline-block">
+                                    <img src="{{ $fotoTemp }}" class="img-thumbnail" style="max-height:120px;"
+                                        alt="Previsualización">
+                                    <button type="button"
+                                        class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle"
+                                        wire:click="quitarFoto" style="line-height:1;padding:2px 6px;">
+                                        &times;
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
                         <input type="file" id="inpCamaraFoto" accept="image/*" capture="environment"
-                            style="display: none;" onchange="procesarImagenInput(this)">
+                            style="display:none;" onchange="procesarImagenInput(this)">
 
                         <div class="d-flex gap-2 justify-content-center align-items-center">
                             <button id="btnChecada" type="button" class="bot botVerde botChico"
@@ -87,10 +95,9 @@
                                 title="Capturar / Subir Foto (o Ctrl+V)">
                                 <i class="bi bi-camera-fill"></i>
                             </button>
-                            @if(auth()->user()->roles->min('nivel') < 3)
+                            @if (auth()->user()->roles->min('nivel') < 3)
                                 <button class="bot botVerde botChico" wire:click="imprimirNomina"
-                                    wire:loading.attr="disabled" wire:target="imprimirNomina" 
-                                    title="Imprimir nómina">
+                                    wire:loading.attr="disabled" wire:target="imprimirNomina" title="Imprimir nómina">
                                     <span wire:loading.remove wire:target="imprimirNomina">
                                         <i class="bi bi-printer"></i></span>
                                     <span wire:loading wire:target="imprimirNomina">⏳</span>
@@ -99,7 +106,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="cardSec mb-3" x-data="{ verMapa: true }">
+                <div class="cardSec mb-1" x-data="{ verMapa: true }">
                     <div class="cardSec-header d-flex justify-content-between align-items-center">
                         <span>Mapa de Ubicaciones</span>
                         <button type="button" class="bot botNegro botChico"
@@ -110,18 +117,18 @@
                     </div>
                     <div class="cardSec-body p-0" x-show="verMapa" wire:ignore>
                         <div id="IdMapa" data-casas="{{ json_encode($todasLasCasas) }}"
-                            style="height: 280px; width: 100%; border-radius: 0 0 8px 8px;"></div>
+                            style="height: 30vh; width: 100%;"></div>
                     </div>
                 </div>
             </div>
             <div class="col-12 col-md-8">
-                <div class="cardSec mb-3">
+                <div class="cardSec mb-1">
                     <div class="cardSec-header d-flex justify-content-between align-items-center">
                         <span>Historial</span>
                     </div>
-                    <div class="cardSec-body">
+                    <div class="cardSec-body" style="max-height:60vh;">
                         @include('livewire.asistencias.modals')
-                        <div class="mb-3 d-flex justify-content-end">{{ $asistencias->links() }}</div>
+                        <div class="mb-1 d-flex justify-content-end">{{ $asistencias->links() }}</div>
                         @php
                             $semanas = $asistencias->groupBy(function ($item) {
                                 return \Carbon\Carbon::parse($item->fecha)->format('Y-W');
@@ -135,7 +142,7 @@
                             @endphp
                             <div class="mb-4">
                                 <div
-                                    class="border-bottom mb-2 pb-2 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                                    class="border-bottom mb-1 pb-2 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
                                     <div>
                                         <strong>Semana: del {{ $primerDia->format('d/m/Y') }} al
                                             {{ $ultimoDia->format('d/m/Y') }}</strong>
@@ -216,15 +223,15 @@
                                             $esHoy = \Carbon\Carbon::parse($row->fecha)->isToday();
                                             $adicionales = $row->adicionales;
                                         @endphp
-                                        <div class="card p-3 mb-2 {{ $esHoy ? 'bg-warning bg-opacity-10' : '' }}">
-                                            <div class="d-flex justify-content-between mb-2">
+                                        <div class="card p-3 mb-1 {{ $esHoy ? 'bg-warning bg-opacity-10' : '' }}">
+                                            <div class="d-flex justify-content-between mb-1">
                                                 <span><strong>{{ \Carbon\Carbon::parse($row->fecha)->format('d/m/Y') }}</strong></span>
                                                 <button wire:click="iniciarEdicion({{ $row->id }})"
                                                     class="bot botNaranja botChico">
                                                     <i class="bi-pencil-square"></i>
                                                 </button>
                                             </div>
-                                            <div class="row mb-2">
+                                            <div class="row mb-1">
                                                 <div class="col-6">
                                                     <small class="text-muted">ENTRADA</small>
                                                     <div><strong>{{ $row->horaEnt }}</strong></div>

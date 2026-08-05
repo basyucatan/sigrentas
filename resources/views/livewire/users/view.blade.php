@@ -11,7 +11,7 @@
                         <label class="etiBase">Gestión</label>
                         <select wire:model.live="vistaActiva" class="inpBase">
                             <option value="usuarios">Usuarios</option>
-                            @if($this->puedeGestionarEstructura)
+                            @if(auth()->user()->canEstructurar)
                                 <option value="roles">Roles</option>
                                 <option value="permisos">Permisos</option>
                             @endif
@@ -43,12 +43,14 @@
                             </select>
                         </div>
                     @endif
-                    <div class="mt-2">
-                        <button class="bot botVerde w-100 d-flex align-items-center justify-content-center gap-2" wire:click="create">
-                            <i class="bi bi-file-earmark-plus"></i>
-                            <span>Nuevo {{ ucfirst(substr($vistaActiva, 0, -1)) }}</span>
-                        </button>
-                    </div>
+                    @if(auth()->user()->canEstructurar)
+                        <div class="mt-2">
+                            <button class="bot botVerde w-100 d-flex align-items-center justify-content-center gap-2" wire:click="create">
+                                <i class="bi bi-file-earmark-plus"></i>
+                                <span>Nuevo {{ ucfirst(substr($vistaActiva, 0, -1)) }}</span>
+                            </button>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -105,15 +107,17 @@
                                         <td>{{ $row->name }}</td>
                                     @endif
                                     <td width="60">
-                                        <div class="d-flex gap-2">
-                                            <button wire:click="edit({{ $row->id }})" class="bot botNaranja">
-                                                <i class="bi-pencil-square"></i>
-                                            </button>
-                                            <button wire:click="destroy({{ $row->id }})" class="bot botRojo"
-                                                onclick="confirm('¿Estás seguro de eliminar este registro?') || event.stopImmediatePropagation()">
-                                                <i class="bi-trash3-fill"></i>
-                                            </button>
-                                        </div>
+                                        @if(auth()->user()->canEstructurar)
+                                            <div class="d-flex gap-2">
+                                                <button wire:click="edit({{ $row->id }})" class="bot botNaranja">
+                                                    <i class="bi-pencil-square"></i>
+                                                </button>
+                                                <button wire:click="destroy({{ $row->id }})" class="bot botRojo"
+                                                    onclick="confirm('¿Estás seguro de eliminar este registro?') || event.stopImmediatePropagation()">
+                                                    <i class="bi-trash3-fill"></i>
+                                                </button>
+                                            </div>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty

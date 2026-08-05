@@ -21,11 +21,15 @@
 
         <div class="textoFuego">Web Master Model</div>
         <p class="text-white-50 lead">WMM © {{ date('Y') }} | Sistemas Informáticos</p>
-        
         @auth
-        <div class="mt-4">
-            <a href="/asistencias" class="bot botVerde">Checador</a>
-        </div>
+            <div class="mt-4">
+                @role('inquilino')
+                    <a href="/cobhuesped" class="bot botVerde">Mi cuenta</a>
+                @endrole
+                @unlessrole('inquilino')
+                    <a href="/asistencias" class="bot botVerde">Checador</a>
+                @endunlessrole
+            </div>
         @endauth
     </div>
 </div>

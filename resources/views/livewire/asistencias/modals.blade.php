@@ -12,22 +12,24 @@
                                 <input type="hidden" wire:model="selectedId">
                             @endif
                             <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="etiBase">Pena Entrada</label>
-                                    <select wire:model="penaEntradaId" class="inpBase">
-                                        <option value="">Sin Penalización</option>
-                                        <option value="1">Un día completo (ID: 1)</option>
-                                        <option value="2">Medio día (ID: 2)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="etiBase">Pena Salida</label>
-                                    <select wire:model="penaSalidaId" class="inpBase">
-                                        <option value="">Sin Penalización</option>
-                                        <option value="1">Un día completo (ID: 1)</option>
-                                        <option value="2">Medio día (ID: 2)</option>
-                                    </select>
-                                </div>
+                                @if(auth()->user()->roles->min('nivel') < 3)
+                                    <div class="col-md-6">
+                                        <label class="etiBase">Pena Entrada</label>
+                                        <select wire:model="penaEntradaId" class="inpBase">
+                                            <option value="">Sin Penalización</option>
+                                            <option value="1">Un día completo (ID: 1)</option>
+                                            <option value="2">Medio día (ID: 2)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="etiBase">Pena Salida</label>
+                                        <select wire:model="penaSalidaId" class="inpBase">
+                                            <option value="">Sin Penalización</option>
+                                            <option value="1">Un día completo (ID: 1)</option>
+                                            <option value="2">Medio día (ID: 2)</option>
+                                        </select>
+                                    </div>
+                                @endif
                                 <div class="col-12">
                                     <label class="etiBase">Justificación Entrada</label>
                                     <input wire:model="justificacionEntrada" type="text" class="inpBase" onfocus="this.select()">

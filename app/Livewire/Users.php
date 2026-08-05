@@ -40,13 +40,6 @@ class Users extends Component
         $this->resetPage();
         $this->keyWord = '';
     }
-
-    #[Computed]
-    public function puedeGestionarEstructura()
-    {
-        return auth()->user()->hasAnyRole(['superAdmin', 'director', 'gerente']) || auth()->user()->roles->min('nivel') <= 3;
-    }
-
     #[Computed]
     public function listado()
     {
@@ -68,12 +61,12 @@ class Users extends Component
             })
             ->paginate(10);
         }
-        if ($this->vistaActiva === 'roles' && $this->puedeGestionarEstructura) {
+        if ($this->vistaActiva === 'roles' && auth()->user()->canEstructurar) {
             return Role::where('nivel', '>=', $miNivelMaximo)
                 ->where('name', 'LIKE', $keyWord)
                 ->paginate(10);
         }
-        if ($this->vistaActiva === 'permisos' && $this->puedeGestionarEstructura) {
+        if ($this->vistaActiva === 'permisos' && auth()->user()->canEstructurar) {
             return Permission::where('name', 'LIKE', $keyWord)
                 ->paginate(10);
         }
@@ -111,9 +104,9 @@ class Users extends Component
         $this->resetInput();
         if ($this->vistaActiva === 'usuarios') {
             $this->verModalUser = true;
-        } elseif ($this->vistaActiva === 'roles' && $this->puedeGestionarEstructura) {
+        } elseif ($this->vistaActiva === 'roles' && auth()->user()->canEstructurar) {
             $this->verModalRol = true;
-        } elseif ($this->vistaActiva === 'permisos' && $this->puedeGestionarEstructura) {
+        } elseif ($this->vistaActiva === 'permisos' && auth()->user()->canEstructurar) {
             $this->verModalPermiso = true;
         }
     }
@@ -142,13 +135,13 @@ class Users extends Component
             $this->rolesSeleccionados = $user->roles->pluck('name')->toArray();
             $this->permisosSeleccionados = $user->getDirectPermissions()->pluck('name')->toArray();
             $this->verModalUser = true;
-        } elseif ($this->vistaActiva === 'roles' && $this->puedeGestionarEstructura) {
+        } elseif ($this->vistaActiva === 'roles' && auth()->user()->canEstructurar) {
             $rol = Role::findOrFail($id);
             $this->name = $rol->name;
             $this->nivel = $rol->nivel;
             $this->permisosSeleccionados = $rol->permissions->pluck('name')->toArray();
             $this->verModalRol = true;
-        } elseif ($this->vistaActiva === 'permisos' && $this->puedeGestionarEstructura) {
+        } elseif ($this->vistaActiva === 'permisos' && auth()->user()->canEstructurar) {
             $permiso = Permission::findOrFail($id);
             $this->name = $permiso->name;
             $this->verModalPermiso = true;
@@ -159,9 +152,9 @@ class Users extends Component
     {
         if ($this->verModalUser) {
             $this->guardarUsuario();
-        } elseif ($this->verModalRol && $this->puedeGestionarEstructura) {
+        } elseif ($this->verModalRol && auth()->user()->canEstructurar) {
             $this->guardarRol();
-        } elseif ($this->verModalPermiso && $this->puedeGestionarEstructura) {
+        } elseif ($this->verModalPermiso && auth()->user()->canEstructurar) {
             $this->guardarPermiso();
         }
     }
@@ -226,10 +219,10 @@ class Users extends Component
         if ($id) {
             if ($this->vistaActiva === 'usuarios') {
                 User::where('id', $id)->delete();
-            } elseif ($this->vistaActiva === 'roles' && $this->puedeGestionarEstructura) {
+            } elseif ($this->vistaActiva === 'roles' && auth()->user()->canEstructurar) {
                 Role::where('id', $id)->delete();
                 $this->roles = Util::getArray('roles', 'name');
-            } elseif ($this->vistaActiva === 'permisos' && $this->puedeGestionarEstructura) {
+            } elseif ($this->vistaActiva === 'permisos' && auth()->user()->canEstructurar) {
                 Permission::where('id', $id)->delete();
             }
         }

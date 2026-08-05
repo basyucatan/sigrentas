@@ -53,11 +53,14 @@
                                 </div>
                                 <div class="border-start mx-1"></div>
                                 <div>
-                                    <span class="text-muted d-block font-monospace" style="font-size: 0.75rem;">PENA</span>
-                                    <strong class="text-danger">{{ Util::Dinero($row->penaEntrega) }}</strong>
+                                    <span class="text-muted d-block font-monospace" style="font-size: 0.75rem;">CONTRATO</span>
+                                    <strong class="text-danger">{{ Util::Dinero($row->adicionales['montoContrato'] ?? 0) }}</strong>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end align-items-center gap-1">
+                                <button wire:click="firmar({{ $row->id }})" class="bot botVerde botChico" title="Capturar firma">
+                                    📝
+                                </button>
                                 <button class="bot botAzul botChico" wire:click="imprimir({{ $row->id }})" wire:loading.attr="disabled" wire:target="imprimir" title="Print Invoice">
                                     <span wire:loading.remove wire:target="imprimir"><i class="bi bi-printer"></i></span>
                                     <span wire:loading wire:target="imprimir">⏳</span>

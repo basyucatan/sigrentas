@@ -31,5 +31,11 @@ class User extends Authenticatable
     public function Division()
     {
         return $this->hasOne('App\Models\Division', 'id', 'IdDivision');
-    }      
+    }
+    public function inquilino()
+    {
+        return $this->hasOne('App\Models\Inquilino', 'IdUser', 'id');
+    }
+    public function getCanEstructurarAttribute(){return $this->roles->min('nivel') <= 3;}
+    public function getCanMenuAttribute(){return $this->roles->min('nivel') <= 5;}
 }
