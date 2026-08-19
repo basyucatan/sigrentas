@@ -6,8 +6,21 @@
                 <div class="cardPrin-header">Cobranza</div>
                 <div class="cardPrin-body p-2">
                     <div class="mb-2">
+                        <label class="etiBase">Buscar Inquilino / Teléfono</label>
+                        <div class="position-relative">
+                            <input wire:model.lazy="keyWord" class="inpSolo" wire:keydown.escape="$set('keyWord','')"
+                                onfocus="this.select()" placeholder="Buscar por nombre o teléfono...">
+                            @if ($keyWord)
+                                <span wire:click="$set('keyWord','')" class="bot botNegro botChico"
+                                    style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                                    X
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="mb-2">
                         <label class="etiBase">Casa</label>
-                        <select wire:model.live="IdCasa" wire:change="elegirCasa()" class="inpBase">
+                        <select wire:model="IdCasa" wire:change="elegirCasa()" class="inpBase">
                             <option value="">-- Seleccionar Casa --</option>
                             @foreach ($casas as $key => $val)
                                 <option value="{{ $key }}">{{ $val }}</option>
@@ -16,11 +29,16 @@
                     </div>
                     <div class="mb-2">
                         <label class="etiBase">Cuarto (Ocupados)</label>
-                        <select wire:model.live="IdCuarto" wire:change="elegirCuarto()" class="inpBase"
-                            @if (!$IdCasa || $sinCuartosVigentes) disabled @endif>
+                        <select wire:model="IdCuarto" 
+                                wire:change="elegirCuarto()"
+                                wire:key="select-cuarto-{{ $IdCasa }}-{{ count($cuartos) }}" 
+                                class="inpBase"
+                                @if (!$IdCasa || $sinCuartosVigentes) disabled @endif>
                             <option value="">-- Seleccionar Cuarto --</option>
                             @foreach ($cuartos as $key => $val)
-                                <option value="{{ $key }}">{{ $val }}</option>
+                                <option value="{{ $key }}" {{ (string)$IdCuarto === (string)$key ? 'selected' : '' }}>
+                                    {{ $val }}
+                                </option>
                             @endforeach
                         </select>
                         @if ($sinCuartosVigentes)
@@ -30,7 +48,7 @@
                     @if ($mostrarSelectContrato)
                         <div class="mb-2">
                             <label class="etiBase">Contrato / Inquilino</label>
-                            <select wire:model.live="IdContrato" class="inpBase">
+                            <select wire:model="IdContrato" class="inpBase">
                                 <option value="">-- Seleccionar Contrato --</option>
                                 @foreach ($contratos as $key => $val)
                                     <option value="{{ $key }}">{{ $val }}</option>
@@ -77,8 +95,11 @@
                     $semaforo = $analitica['estadoSemaforo'];
                     $dias = $analitica['diasDiferencia'];
                     $saldoProximo = $proximo ? ($proximo->montoRenta - $proximo->pagos->sum('montoPago')) : 0;
+                    $nombreInquilino = $proximo?->contrato?->inquilino?->inquilino ?? 'Inquilino no especificado';
                 @endphp
-
+                <h5 class="fw-bold text-primary mb-2">
+                    <i class="bi bi-person-fill me-1"></i>{{ $nombreInquilino }}
+                </h5>
                 @if($proximo)
                     @if($semaforo === 'al_dia')
                         <div class="cardPrin mb-2 border-start border-4 border-success bg-white shadow-sm p-2">
@@ -88,7 +109,7 @@
                                         <i class="bi bi-check-circle-fill me-1"></i> Inquilino al Día
                                     </span>
                                     <div class="fw-bold text-dark fs-6">{{ $proximo->adicionales['concepto'] ?? 'Renta Mensual' }}</div>
-                                    <div class="small text-muted">Próximo vencimiento: <strong>{{ $proximo->fechaVence }}</strong></div>
+                                    <div class="small text-muted">Próximo vencimiento: <strong class="fs-5">{{ Util::formatFecha($proximo->fechaVence,'Corta') }}</strong></div>
                                 </div>
                                 <div class="text-end">
                                     <span class="text-uppercase text-muted fs-7 fw-semibold d-block">Monto Próximo</span>
@@ -104,7 +125,7 @@
                                         Próximo a Vencer ({{ $dias }} días)
                                     </span>
                                     <div class="fw-bold text-dark fs-6">{{ $proximo->adicionales['concepto'] ?? 'Renta Mensual' }}</div>
-                                    <div class="small text-muted">Vence el: <strong>{{ $proximo->fechaVence }}</strong></div>
+                                    <div class="small text-muted">Vence el: <strong>{{ Util::formatFecha($proximo->fechaVence,'Corta') }}</strong></div>
                                 </div>
                                 <div class="text-end">
                                     <span class="text-uppercase text-muted fs-7 fw-semibold d-block">Monto por Cobrar</span>
@@ -120,7 +141,7 @@
                                         Cobro Vencido ({{ $dias }} días de mora)
                                     </span>
                                     <div class="fw-bold text-danger fs-6">{{ $proximo->adicionales['concepto'] ?? 'Renta Mensual' }}</div>
-                                    <div class="small text-muted">Venció el: <strong>{{ $proximo->fechaVence }}</strong></div>
+                                    <div class="small text-muted">Venció el: <strong class="fs-5">{{ Util::formatFecha($proximo->fechaVence,'Corta') }}</strong></div>
                                 </div>
                                 <div class="text-end">
                                     <span class="text-uppercase text-muted fs-7 fw-semibold d-block">Monto Requerido</span>
@@ -192,7 +213,7 @@
                                             <span class="fw-bold text-dark fs-6 d-inline-block">
                                                 {{ $recibo->adicionales['concepto'] ?? 'Recibo de Renta' }}
                                             </span>
-                                            <div class="small text-muted">Vence: <strong>{{ $recibo->fechaVence }}</strong></div>
+                                            <div class="small text-muted">Vence: <strong class="fs-6">{{ Util::formatFecha($recibo->fechaVence, 'Corta') }}</strong></div>
                                         </div>
                                         <div class="text-end">
                                             <span class="badge {{ $badgeColor }}">{{ $estadoTexto }}</span>
@@ -205,7 +226,6 @@
                                             <table class="table table-sm tabBase m-0 mt-1">
                                                 <thead>
                                                     <tr>
-                                                        <th>Fecha</th>
                                                         <th>Monto</th>
                                                         <th class="text-center">Comprobante</th>
                                                         <th class="text-end">Acción</th>
@@ -214,7 +234,7 @@
                                                 <tbody>
                                                     @foreach ($recibo->pagos as $pago)
                                                         <tr>
-                                                            <td>{{ $pago->fecha }}</td>
+                                                            <td>{{ Util::formatFecha($pago->fecha,'Corta') }}</td>
                                                             <td>${{ number_format($pago->montoPago, 2) }}</td>
                                                             <td class="text-center">
                                                                 @if (isset($pago->adicionales['foto']))
@@ -243,8 +263,8 @@
                                         </div>
                                     @endif
                                 </div>
-                                <div class="cardPrin-footer p-2 bg-transparent d-flex justify-content-between align-items-center">
-                                    <span class="small text-muted">Saldo: <strong class="text-dark">${{ number_format($saldo, 2) }}</strong></span>
+                                <div class="cardSec-footer p-2 bg-transparent d-flex justify-content-between align-items-center">
+                                    <span class="small text-muted">Saldo: <strong class="text-success fw-bold fs-5">${{ number_format($saldo, 2) }}</strong></span>
                                     @if ($saldo > 0)
                                         <button wire:click="abrirModalPago({{ $recibo->id }})"
                                             class="bot botVerde botChico">Registrar Pago</button>

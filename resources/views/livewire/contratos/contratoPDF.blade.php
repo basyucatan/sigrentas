@@ -69,6 +69,7 @@
         <span class="resaltar2">
             "DEPARTAMENTO {!! evaluar($contrato->cuarto?->cuarto, '# DEPTO', false, 'numeroALetras') !!}". 
         </span>
+        <span>{{ relleno(30) }}</span> 
     </div>
     <div class="parrafo">
         <span class="resaltar">SEGUNDA.- “LA PARTE OCUPANTE”</span> reconoce y declara expresamente que 
@@ -432,8 +433,8 @@
     </div>
     <div class="parrafo resaltar">
         Y PARA CONSTANCIA Y CONFORMIDAD, SUSCRIBIMOS EN DUPLICADO E IMPRIMIMOS LA HUELLA DE NUESTRO DEDO 
-        PULGAR DERECHO, EL PRESENTE DOCUMENTO, EN LA CIUDAD DE MÉRIDA, YUCATÁN, ESTADOS UNIDOS MEXICANOS, A LOS 
-        {!! evaluar($contrato->fechaIni, 'fecha inicial', false, 'fecha') !!}.
+        PULGAR DERECHO, EL PRESENTE DOCUMENTO, EN LA CIUDAD DE MÉRIDA, YUCATÁN, ESTADOS UNIDOS MEXICANOS, EL DÍA 
+        {!! evaluar($contrato->fechaIni, 'fecha inicial', false, 'fechaALetras') !!}.
         <span>{{ relleno(40) }}</span>
     </div>
     <div class="parrafoCenter resaltar">

@@ -4,7 +4,6 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Models\{Contrato, Recibo, Pago, Cuarto, Util};
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -13,7 +12,9 @@ class Cobranza extends Component
 {
     use WithPagination, WithFileUploads;
     protected $paginationTheme = 'bootstrap';
-    public $IdCasa, $IdCuarto, $IdContrato, $IdRecibo, $idPagoEdicion, $montoPago, $fechaPago, $foto, $fotoActual, $verModalPago = false;
+    public $IdCasa, $IdCuarto, $IdContrato, $keyWord, $IdRecibo, $idPagoEdicion, 
+        $montoPago, 
+        $fechaPago, $foto, $fotoActual, $verModalPago = false;
     public $fechaIni, $fechaFin;
     public $filtroVista = 'proximo';
     public $mostrarSelectContrato = false;
@@ -26,17 +27,55 @@ class Cobranza extends Component
         $this->fechaIni = date('Y-m-01');
         $this->fechaFin = date('Y-m-t');
     }
+    public function updatedKeyWord()
+    {
+        $keyWord = trim($this->keyWord);
+        if (empty($keyWord)) { return; }
+        $primerRecibo = Recibo::with(['contrato.inquilino', 'contrato.cuarto'])
+            ->whereHas('contrato.inquilino', function ($q) use ($keyWord) {
+                $q->where('inquilino', 'LIKE', '%' . $keyWord . '%')
+                  ->orWhere('telefono', 'LIKE', '%' . $keyWord . '%');
+            })
+            ->orderBy('fechaVence', 'asc')
+            ->first();
+        if ($primerRecibo && $contrato = $primerRecibo->contrato) {
+            if ($contrato->cuarto?->IdCasa) {
+                $this->IdCasa = $contrato->cuarto->IdCasa;
+                $this->cargarCuartos($this->IdCasa);
+            }
+            if ($contrato->IdCuarto) {
+                $this->IdCuarto = $contrato->IdCuarto;
+                $this->cargarContratos($contrato->IdCuarto);
+            }
+            $this->IdContrato = $contrato->id;
+            $this->keyWord = null;
+        }
+    }
     public function elegirCasa()
     {
         $this->cuartos = [];
         $this->contratos = [];
+        $this->keyWord = null;
         $this->IdCuarto = null;
         $this->IdContrato = null;
         $this->mostrarSelectContrato = false;
         $this->sinCuartosVigentes = false;
-        if (!$this->IdCasa) {return;}
+        if (!$this->IdCasa) { return; }
+        $this->cargarCuartos($this->IdCasa);
+    }
+    public function elegirCuarto()
+    {
+        $this->contratos = [];
+        $this->keyWord = null;
+        $this->IdContrato = null;
+        $this->mostrarSelectContrato = false;
+        if (!$this->IdCuarto) { return; }
+        $this->cargarContratos($this->IdCuarto);
+    }
+    private function cargarCuartos($idCasa)
+    {
         $hoy = date('Y-m-d');
-        $this->cuartos = Cuarto::where('IdCasa', $this->IdCasa)
+        $this->cuartos = Cuarto::where('IdCasa', $idCasa)
             ->whereHas('contratos', fn($q) => $q->where('fechaFin', '>=', $hoy))
             ->pluck('cuarto', 'id')
             ->toArray();
@@ -44,24 +83,22 @@ class Cobranza extends Component
             $this->sinCuartosVigentes = true;
         }
     }
-    public function elegirCuarto()
+    private function cargarContratos($idCuarto)
     {
-        $this->contratos = [];
-        $this->IdContrato = null;
-        $this->mostrarSelectContrato = false;
-        if (!$this->IdCuarto) {return;}
         $hoy = date('Y-m-d');
-        $todosContratos = Contrato::where('IdCuarto', $this->IdCuarto)
+        $todosContratos = Contrato::where('IdCuarto', $idCuarto)
             ->with('inquilino')
             ->orderBy('fechaFin', 'desc')
             ->get();
-        if ($todosContratos->isEmpty()) {return;}
+        if ($todosContratos->isEmpty()) { return; }
         $vigentes = $todosContratos->filter(fn($c) => $c->fechaFin >= $hoy);
         if ($vigentes->count() === 1) {
             $this->IdContrato = $vigentes->first()->id;
         } elseif ($vigentes->count() > 1) {
             $this->mostrarSelectContrato = true;
-            $this->contratos = $vigentes->mapWithKeys(fn($item) => [$item->id => 'Contrato #' . $item->id . ' - ' . ($item->inquilino?->inquilino ?? 'Sin Inquilino')])->toArray();
+            $this->contratos = $vigentes->mapWithKeys(fn($item) => [
+                $item->id => 'Contrato #' . $item->id . ' - ' . ($item->inquilino?->inquilino ?? 'Sin Inquilino')
+            ])->toArray();
         } else {
             $this->IdContrato = $todosContratos->first()->id;
         }
@@ -162,8 +199,10 @@ class Cobranza extends Component
     #[Computed]
     public function todosLosRecibos()
     {
-        if (!$this->IdContrato) {return collect([]);}
-        return Recibo::with('pagos')
+        if (!$this->IdContrato) {
+            return collect([]);
+        }
+        return Recibo::with(['pagos', 'contrato.inquilino', 'contrato.cuarto'])
             ->where('IdContrato', $this->IdContrato)
             ->orderBy('fechaVence', 'asc')
             ->get();
@@ -176,7 +215,6 @@ class Cobranza extends Component
         $pagados = collect([]);
         $proximoRecibo = null;
         $hoy = Carbon::today();
-
         foreach ($recibos as $recibo) {
             $totalPagado = $recibo->pagos->sum('montoPago');
             $saldo = $recibo->montoRenta - $totalPagado;
@@ -189,14 +227,11 @@ class Cobranza extends Component
                 $pagados->push($recibo);
             }
         }
-
         $estadoSemaforo = 'al_dia';
         $diasDiferencia = 0;
-
         if ($proximoRecibo) {
             $fechaVence = Carbon::parse($proximoRecibo->fechaVence);
             $diasDiferencia = $hoy->diffInDays($fechaVence, false);
-
             if ($diasDiferencia < 0) {
                 $estadoSemaforo = 'vencido';
             } elseif ($diasDiferencia <= 3) {
@@ -205,9 +240,8 @@ class Cobranza extends Component
                 $estadoSemaforo = 'al_dia';
             }
         }
-
         return [
-            'proximoRecibo' => $proximoRecibo,
+            'proximoRecibo' => $proximoRecibo, 
             'pendientes' => $pendientes,
             'pagados' => $pagados,
             'estadoSemaforo' => $estadoSemaforo,

@@ -39,6 +39,7 @@
                                 <li><a href="{{ url('/asistencias') }}" class="nav-link small">🕒 Checador</a></li>
                                 <li><a href="{{ url('/control') }}" class="nav-link small">✨ Control</a></li>
                                 <li><a href="{{ url('/contratos') }}" class="nav-link small">📄 Contratos</a></li>
+                                <li><a href="{{ url('/cobranza') }}" class="nav-link small">💰 Cobranza</a></li>
                             </ul>                        
                         </li>
                     </ul>                

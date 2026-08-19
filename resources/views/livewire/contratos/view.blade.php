@@ -62,8 +62,8 @@
                                     📝
                                 </button>
                                 <button class="bot botAzul botChico" wire:click="imprimir({{ $row->id }})" wire:loading.attr="disabled" wire:target="imprimir" title="Print Invoice">
-                                    <span wire:loading.remove wire:target="imprimir"><i class="bi bi-printer"></i></span>
-                                    <span wire:loading wire:target="imprimir">⏳</span>
+                                    <span wire:loading.remove wire:target="imprimir({{ $row->id }})"><i class="bi bi-printer"></i></span>
+                                    <span wire:loading wire:target="imprimir({{ $row->id }})">⏳</span>
                                 </button>
                                 <button wire:click="edit({{ $row->id }})" class="bot botNaranja botChico" title="Editar">
                                     <i class="bi-pencil-square"></i>

@@ -5,8 +5,11 @@
         $saldoProximo = $proximo ? $proximo->montoRenta - $proximo->pagos->sum('montoPago') : 0;
         $semaforo = $analitica['estadoSemaforo'];
         $dias = $analitica['diasDiferencia'];
+        $nombreInquilino = $proximo?->contrato?->inquilino?->inquilino ?? 'Inquilino no especificado';
     @endphp
-
+    <h5 class="fw-bold text-primary mb-2">
+        <i class="bi bi-person-fill me-1"></i>{{ $nombreInquilino }}
+    </h5>
     @if ($proximo)
         @if ($semaforo === 'al_dia')
             <div class="cardPrin mb-3 border-start border-4 border-success bg-white shadow-sm">
@@ -20,7 +23,7 @@
                                 {{ $proximo->adicionales['concepto'] ?? 'Renta Mensual' }}
                             </h5>
                             <div class="small text-muted mt-1">
-                                Tu siguiente fecha límite es el <strong class="text-dark">{{ $proximo->fechaVence }}</strong>. Gracias por tu puntualidad.
+                                Tu siguiente fecha límite es el <strong class="text-dark fs-5">{{ Util::formatFecha($proximo->fechaVence,'Corta') }}</strong>. Gracias por tu puntualidad.
                             </div>
                         </div>
                         <div class="col-12 col-md-4 text-md-end">
@@ -74,7 +77,7 @@
                                 {{ $proximo->adicionales['concepto'] ?? 'Renta Mensual' }}
                             </h4>
                             <div class="small text-muted mt-1">
-                                Presenta un retraso de <strong class="text-danger">{{ $dias }} días</strong>. Venció el {{ $proximo->fechaVence }}.
+                                Presenta un retraso de <strong class="text-danger fs-5">{{ $dias }}</strong> días, Venció el <strong class="text-danger fs-5">{{ Util::formatFecha($proximo->fechaVence, 'Corta') }}.</strong>
                             </div>
                         </div>
                         <div class="col-12 col-md-4 text-md-end">
@@ -148,7 +151,7 @@
                                     <span class="badge ms-1 @if ($esPagado) bg-success @else bg-secondary @endif">
                                         {{ $esPagado ? 'PAGADO' : 'PENDIENTE' }}
                                     </span>
-                                    <div class="small text-muted">Vencimiento: <strong>{{ $recibo->fechaVence }}</strong></div>
+                                    <div class="small text-muted">Vencimiento: <span class="badge bg-dark fs-6">{{ Util::formatFecha($recibo->fechaVence,'Corta') }}</span></div>
                                 </div>
                                 <div class="text-end">
                                     <h6 class="m-0 fw-bold text-dark">${{ number_format($recibo->montoRenta, 2) }}</h6>
