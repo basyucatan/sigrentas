@@ -22,8 +22,7 @@ class Cuartos extends Component
 	public function filteredCuartos()
 	{
 		$keyWord = '%' . $this->keyWord . '%';
-		return Cuarto::Where('IdCasa', $this->IdCasa)
-			->where(function ($query) use ($keyWord) {
+		return Cuarto::where(function ($query) use ($keyWord) {
 				$query
 						->orWhere('IdCasa', 'LIKE', $keyWord)
 						->orWhere('cuarto', 'LIKE', $keyWord)
