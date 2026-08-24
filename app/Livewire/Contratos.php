@@ -106,20 +106,24 @@ class Contratos extends Component
     public function filteredContratos()
     {
         $keyWord = '%' . $this->keyWord . '%';
-        return Contrato::Where('id','>',0)
+        return Contrato::where('id', '>', 0)
             ->where(function ($query) use ($keyWord) {
                 $query
-                        ->orWhere('IdCuarto', 'LIKE', $keyWord)
-                        ->orWhere('IdInquilino', 'LIKE', $keyWord)
-                        ->orWhere('IdPropietario', 'LIKE', $keyWord)
-                        ->orWhere('fechaIni', 'LIKE', $keyWord)
-                        ->orWhere('fechaFin', 'LIKE', $keyWord)
-                        ->orWhere('montoRenta', 'LIKE', $keyWord)
-                        ->orWhere('deposito', 'LIKE', $keyWord)
-                        ->orWhere('penaEntrega', 'LIKE', $keyWord)
-                        ->orWhere('docContrato', 'LIKE', $keyWord)
-                        ->orWhere('docInvMuebles', 'LIKE', $keyWord)
-                        ->orWhere('firma', 'LIKE', $keyWord);
+                    ->orWhere('IdCuarto', 'LIKE', $keyWord)
+                    ->orWhere('fechaIni', 'LIKE', $keyWord)
+                    ->orWhere('fechaFin', 'LIKE', $keyWord)
+                    ->orWhere('montoRenta', 'LIKE', $keyWord)
+                    ->orWhere('deposito', 'LIKE', $keyWord)
+                    ->orWhere('penaEntrega', 'LIKE', $keyWord)
+                    ->orWhereHas('inquilino', function ($query) use ($keyWord) {
+                        $query->where('inquilino', 'LIKE', $keyWord);
+                    })
+                    ->orWhereHas('cuarto.casa', function ($query) use ($keyWord) {
+                        $query->where('casa', 'LIKE', $keyWord);
+                    })
+                    ->orWhereHas('propietario', function ($query) use ($keyWord) {
+                        $query->where('propietario', 'LIKE', $keyWord);
+                    });
             })
             ->paginate(12);
     }

@@ -1,4 +1,4 @@
-@section('title', __('Contratos'))
+@section('title', __('Contratos')) 
 <div class="cardPrin" style="height: 75vh; display: flex; flex-direction: column;">
     <div class="cardPrin-header d-flex justify-content-between align-items-center" style="cursor: move;">
         <span>Contratos</span>
