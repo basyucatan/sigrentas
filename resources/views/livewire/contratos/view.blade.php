@@ -26,7 +26,7 @@
                         <div class="card-body p-2">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="fw-bold">#{{ str_pad($row->id, 5, '0', STR_PAD_LEFT) }}</span>
-                                <span class="text-muted small"><i class="bi bi-calendar-event"></i> {{ $row->fechaIni }} al {{ $row->fechaFin }}</span>
+                                <span class="text-muted small"><i class="bi bi-calendar-event"></i> {{ Util::formatFecha($row->fechaIni, 'D/MMM/AA') }} al {{  Util::formatFecha($row->fechaFin,'D/MMM/AA') }}</span>
                             </div>
                             <div class="row g-2">
                                 <div class="col-6 small">

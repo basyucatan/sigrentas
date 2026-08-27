@@ -27,6 +27,7 @@ class Contratos extends Component
     {
         if (!$this->IdCasa) {return [];}
         $this->cuartos = DB::table('cuartos')->where('IdCasa', $this->IdCasa)->pluck('cuarto','id')->toArray();
+        $this->IdCuarto = null;
     }
     public function firmar($id)
     {
@@ -109,20 +110,22 @@ class Contratos extends Component
         return Contrato::where('id', '>', 0)
             ->where(function ($query) use ($keyWord) {
                 $query
-                    ->orWhere('IdCuarto', 'LIKE', $keyWord)
+                    ->where('IdCuarto', 'LIKE', $keyWord)
                     ->orWhere('fechaIni', 'LIKE', $keyWord)
                     ->orWhere('fechaFin', 'LIKE', $keyWord)
                     ->orWhere('montoRenta', 'LIKE', $keyWord)
                     ->orWhere('deposito', 'LIKE', $keyWord)
                     ->orWhere('penaEntrega', 'LIKE', $keyWord)
-                    ->orWhereHas('inquilino', function ($query) use ($keyWord) {
-                        $query->where('inquilino', 'LIKE', $keyWord);
+                    ->orWhereHas('inquilino', function ($q) use ($keyWord) {
+                        $q->where('inquilino', 'LIKE', $keyWord);
                     })
-                    ->orWhereHas('cuarto.casa', function ($query) use ($keyWord) {
-                        $query->where('casa', 'LIKE', $keyWord);
+                    ->orWhereHas('cuarto', function ($q) use ($keyWord) {
+                        $q->whereHas('casa', function ($q2) use ($keyWord) {
+                            $q2->where('casa', 'LIKE', $keyWord);
+                        });
                     })
-                    ->orWhereHas('propietario', function ($query) use ($keyWord) {
-                        $query->where('propietario', 'LIKE', $keyWord);
+                    ->orWhereHas('propietario', function ($q) use ($keyWord) {
+                        $q->where('propietario', 'LIKE', $keyWord);
                     });
             })
             ->paginate(12);
@@ -145,9 +148,11 @@ class Contratos extends Component
     }
     public function edit($id)
     {
+        $this->resetValidation();
         $this->selected_id = $id;
         $this->fill(Contrato::findOrFail($id)->toArray());
         $this->IdCasa = DB::table('cuartos')->where('id', $this->IdCuarto)->first()?->IdCasa;
+        $this->cuartos = DB::table('cuartos')->where('IdCasa', $this->IdCasa)->pluck('cuarto','id')->toArray();
         $this->verModalContrato = true;
     }
     public function create()
@@ -158,33 +163,39 @@ class Contratos extends Component
     public function save()
     {
         $this->validate([
-        'IdCuarto' => 'required',
-        'IdInquilino' => 'required',
-        'IdPropietario' => 'required',
-        'fechaIni' => 'required',
-        'montoRenta' => 'required',
-        'deposito' => 'required',
-        'penaEntrega' => 'required',
+            'IdCuarto' => 'required',
+            'IdInquilino' => 'required',
+            'IdPropietario' => 'required',
+            'fechaIni' => 'required|date',
+            'montoRenta' => 'required',
+            'deposito' => 'required',
+            'penaEntrega' => 'required',
         ]);
-        Contrato::updateOrCreate(
-            ['id' => $this->selected_id],
-            [
-                'IdCuarto' => $this-> IdCuarto,
-                'IdInquilino' => $this-> IdInquilino,
-                'IdPropietario' => $this-> IdPropietario,
-                'fechaIni' => $this-> fechaIni,
-                'fechaFin' => $this-> fechaFin,
-                'montoRenta' => $this-> montoRenta,
-                'deposito' => $this-> deposito,
-                'penaEntrega' => $this-> penaEntrega,
-                'docContrato' => $this-> docContrato,
-                'docInvMuebles' => $this-> docInvMuebles,
-                'adicionales' => $this->adicionales,
-                'firma' => $this-> firma
-            ]
-        );
-        $this->resetInput();
-        $this->verModalContrato = false;
+
+        try {
+            Contrato::updateOrCreate(
+                ['id' => $this->selected_id],
+                [
+                    'IdCuarto' => $this->IdCuarto,
+                    'IdInquilino' => $this->IdInquilino,
+                    'IdPropietario' => $this->IdPropietario,
+                    'fechaIni' => $this->fechaIni,
+                    'fechaFin' => $this->fechaFin,
+                    'montoRenta' => $this->montoRenta,
+                    'deposito' => $this->deposito,
+                    'penaEntrega' => $this->penaEntrega,
+                    'docContrato' => $this->docContrato,
+                    'docInvMuebles' => $this->docInvMuebles,
+                    'adicionales' => $this->adicionales,
+                    'firma' => $this->firma
+                ]
+            );
+
+            $this->resetInput();
+            $this->verModalContrato = false;
+        } catch (\Exception $e) {
+            $this->addError('IdCuarto', $e->getMessage());
+        }
     }
     public function paginationView()
     {

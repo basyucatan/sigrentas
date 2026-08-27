@@ -187,8 +187,11 @@ class Cobranza extends Component
             ->orderBy('fecha', 'asc')
             ->get();
         $totalCobrado = $pagos->sum('montoPago');
+        $pagosPorCasa = $pagos->groupBy(function ($pago) {
+            return $pago->recibo?->contrato?->cuarto?->casa?->casa ?? 'Sin Casa Asignada';
+        });
         $pdf = Pdf::loadView('livewire.cobranza.reportePDF', [
-            'pagos' => $pagos,
+            'pagosPorCasa' => $pagosPorCasa,
             'totalCobrado' => $totalCobrado,
             'fechaIni' => Carbon::parse($this->fechaIni)->format('d/m/Y'),
             'fechaFin' => Carbon::parse($this->fechaFin)->format('d/m/Y')
@@ -196,6 +199,7 @@ class Cobranza extends Component
         $pdf->setPaper('letter', 'portrait');
         return response()->streamDownload(fn() => print($pdf->output()), "reporte_cobranza.pdf", ['Content-Type' => 'application/pdf']);
     }
+
     #[Computed]
     public function todosLosRecibos()
     {
@@ -227,7 +231,8 @@ class Cobranza extends Component
                 $pagados->push($recibo);
             }
         }
-        $estadoSemaforo = 'al_dia';
+        $pagados = $pagados->sortByDesc('fechaVence')->values();
+        $estadoSemaforo = 'al_dia'; 
         $diasDiferencia = 0;
         if ($proximoRecibo) {
             $fechaVence = Carbon::parse($proximoRecibo->fechaVence);

@@ -228,6 +228,7 @@
                                                     <tr>
                                                         <th>Monto</th>
                                                         <th class="text-center">Comprobante</th>
+                                                        <th class="text-end">Foto</th>
                                                         <th class="text-end">Acción</th>
                                                     </tr>
                                                 </thead>
@@ -252,9 +253,11 @@
                                                                 @endif
                                                             </td>
                                                             <td class="text-end">
+                                                                @if(auth()->user()->roles->min('nivel') < 3)
                                                                 <button wire:click="eliminarPago({{ $pago->id }})"
                                                                     class="bot botRojo botChico p-0 px-1"
                                                                     title="Eliminar abono">✕</button>
+                                                                @endif
                                                             </td>
                                                         </tr>
                                                     @endforeach

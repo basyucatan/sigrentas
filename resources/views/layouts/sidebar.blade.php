@@ -81,7 +81,15 @@
                                 </li>
                             </ul>
                         </li>
-                    </ul>                              
+                    </ul>
+                    <ul class="navbar-nav pe-3">
+                        <li class="nav-item custom-dropdown-item">
+                            <a href="#" class="nav-link menu-trigger">📈 Reportes</a>
+                            <ul class="submenu d-none list-unstyled ps-3">
+                                <li><a href="{{ url('/ocupacion') }}" class="nav-link small">📌 Ocupacion</a></li>
+                            </ul>
+                        </li>
+                    </ul> 
                 </div>
             </div>
         @endif
