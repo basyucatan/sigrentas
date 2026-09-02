@@ -108,7 +108,7 @@
                 </div>
 <div class="cardSec mb-1" x-data="{ verPenas: true, semanaAbierta: null }">
     <div class="cardSec-header d-flex justify-content-between align-items-center">
-        <span><i class="bi bi-exclamation-triangle-fill text-danger me-1"></i> Incidencias (2 Sem.)</span>
+        <span><i class="bi bi-exclamation-triangle-fill text-danger me-1"></i> Incidencias</span>
         <button type="button" class="bot botNegro botChico" @click="verPenas = !verPenas">
             <i class="bi" :class="verPenas ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
         </button>
