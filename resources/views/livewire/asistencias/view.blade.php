@@ -179,7 +179,7 @@
                     <div class="cardSec-header d-flex justify-content-between align-items-center">
                         <span>Historial</span>
                     </div>
-                    <div class="cardSec-body" style="max-height:60vh;">
+                    <div class="cardSec-body" style="max-height:75vh;">
                         @include('livewire.asistencias.modals')
                         <div class="mb-1 d-flex justify-content-end">{{ $asistencias->links() }}</div>
                         @php
