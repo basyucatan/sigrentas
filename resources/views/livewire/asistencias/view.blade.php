@@ -134,7 +134,7 @@
                         <div class="d-flex justify-content-between align-items-center border-bottom pb-1 mb-1 last-border-0 {{ $item['tipo'] === 'falta' ? 'bg-danger bg-opacity-10 p-1 rounded' : '' }}">
                             <div>
                                 <div class="fw-bold" style="font-size: 0.75rem;">
-                                    {{ \Carbon\Carbon::parse($item['fecha'])->format('d/m/Y') }}
+                                    {{ Util::formatFecha($item['fecha'],'Corta') }}
                                 </div>
                                 <div class="text-muted" style="font-size: 0.7rem;">
                                     {{ $item['detalle'] }}
@@ -197,8 +197,8 @@
                                 <div
                                     class="border-bottom mb-1 pb-2 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
                                     <div>
-                                        <strong>Semana: del {{ $primerDia->format('d/m/Y') }} al
-                                            {{ $ultimoDia->format('d/m/Y') }}</strong>
+                                        <strong>Semana: del {{ Util::formatFecha($primerDia, 'Corta') }} al
+                                            {{ Util::formatFecha($ultimoDia, 'Corta') }}</strong>
                                     </div>
                                     <div class="d-flex flex-wrap gap-2" style="font-size: 0.85rem;">
                                         <span
@@ -228,7 +228,7 @@
                                                     $adicionales = $row->adicionales;
                                                 @endphp
                                                 <tr class="{{ $esHoy ? 'table-warning' : '' }}">
-                                                    <td><strong>{{ \Carbon\Carbon::parse($row->fecha)->format('d/m/Y') }}</strong>
+                                                    <td><strong>{{ Util::formatFecha($row->fecha, 'Corta') }}</strong>
                                                     </td>
                                                     <td>
                                                         <div><strong>{{ $row->horaEnt }}</strong></div>
