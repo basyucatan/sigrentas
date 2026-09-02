@@ -68,10 +68,9 @@ public function quitarFoto()
 public function penasSemanales()
 {
     $idUsuario = $this->IdUser ?: Auth::id();
-    $inicioDosSemanas = Carbon::now()->subWeeks(2)->startOfWeek();
+    $inicioDosSemanas = Carbon::now()->subWeeks(2)->startOfWeek(); // Lunes de hace 2 semanas
     $finHoy = Carbon::now();
 
-    // 1. Obtener asistencias existentes en el rango
     $asistencias = Asistencia::where('IdUser', $idUsuario)
         ->whereBetween('fecha', [$inicioDosSemanas->format('Y-m-d'), $finHoy->format('Y-m-d')])
         ->get()
@@ -79,9 +78,9 @@ public function penasSemanales()
 
     $alertas = collect();
 
-    // 2. Recorrer día por día (Lunes a Viernes)
     for ($date = $inicioDosSemanas->copy(); $date->lte($finHoy); $date->addDay()) {
-        if ($date->isWeekend()) {
+        // Excluir únicamente los domingos
+        if ($date->isSunday()) {
             continue;
         }
 
@@ -89,7 +88,6 @@ public function penasSemanales()
         $asistencia = $asistencias->get($fechaStr);
 
         if (!$asistencia) {
-            // ALERTA MAYOR: Sin registro en el día
             $alertas->push([
                 'fecha' => $fechaStr,
                 'tipo' => 'falta',
@@ -98,7 +96,6 @@ public function penasSemanales()
                 'claseBadge' => 'bg-danger text-white'
             ]);
         } else {
-            // Evaluar penalizaciones registradas
             $adic = $asistencia->adicionales;
             if (is_array($adic)) {
                 if (isset($adic['penaEntradaId'])) {
@@ -123,7 +120,6 @@ public function penasSemanales()
         }
     }
 
-    // 3. Agrupar alertas por semana
     return $alertas->sortByDesc('fecha')->groupBy(function ($item) {
         $f = Carbon::parse($item['fecha']);
         return "Semana " . $f->copy()->startOfWeek()->format('d/m') . " al " . $f->copy()->endOfWeek()->format('d/m');
