@@ -165,7 +165,7 @@
                         <button type="button" class="bot botNegro botChico"
                             @click="verMapa = !verMapa; $nextTick(() => { if(verMapa && mapa) mapa.invalidateSize(); })">
                             <i class="bi" :class="verMapa ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
-                            <span x-text="verMapa ? 'Ocultar' : 'Mostrar'"></span>
+                            <i class="bi" :class="verPenas ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
                         </button>
                     </div>
                     <div class="cardSec-body p-0" x-show="verMapa" wire:ignore>
