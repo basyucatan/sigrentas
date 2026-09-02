@@ -15,12 +15,10 @@
             Generado el: {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}<br>
         </div>
     </header>
-
     <div style="margin-bottom: 20px;">
         <div style="background: #f8f9fa; padding: 8px 10px; border: 1px solid #dee2e6; margin-bottom: 12px;">
             <strong style="font-size: 10pt; text-transform: uppercase; color: #333;">PERIODO: DEL {{ $fechaIni }} AL {{ $fechaFin }}</strong>
         </div>
-
         @forelse($pagosPorCasa as $nombreCasa => $grupoPagos)
             <div style="page-break-inside: avoid; margin-bottom: 15px;">
                 <div style="background: #e9ecef; padding: 6px 10px; border: 1px solid #ced4da; font-weight: bold; font-size: 10pt; color: #212529;">
@@ -70,7 +68,6 @@
                 </tbody>
             </table>
         @endforelse
-
         @if($pagosPorCasa->isNotEmpty())
             <table style="width: 100%; border-collapse: collapse; margin-top: 10px; page-break-inside: avoid;">
                 <tfoot>
@@ -84,7 +81,6 @@
             </table>
         @endif
     </div>
-
     <div style="position: fixed; bottom: 0; width: 100%; font-size: 7pt;" class="derecha">
         Página <span class="pagina"></span>
     </div>

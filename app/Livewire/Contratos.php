@@ -7,8 +7,6 @@ use App\Models\Recibo;
 use Livewire\Attributes\Computed;
 use App\Models\{Util};
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 class Contratos extends Component
 {
@@ -34,6 +32,10 @@ class Contratos extends Component
         $this->selected_id = $id;
         $this->verModalFirma = true;
     }
+public function imprimirAnieja()
+{
+    return Contrato::imprimirAnieja();
+}
     public function generarRecibosIniciales($contrato)
     {
         if (Recibo::where('IdContrato', $contrato->id)->exists()) {return;}

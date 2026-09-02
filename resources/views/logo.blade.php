@@ -34,9 +34,8 @@
         <defs>
             <linearGradient id="gradFuego" x1="0%" y1="100%" x2="0%" y2="0%">
                 <stop offset="0%" stop-color="#dd2c00" />
-                <stop offset="20%" stop-color="#ff6d00" />
-                <stop offset="65%" stop-color="#ffea00" />
-                <stop offset="88%" stop-color="#0066FF" />
+                <stop offset="80%" stop-color="#ffea00" />
+                {{-- <stop offset="88%" stop-color="#0066FF" /> --}}
                 <stop offset="95%" stop-color="#ffffff" />
                 <stop offset="100%" stop-color="#ffffff" />
             </linearGradient>

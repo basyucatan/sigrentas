@@ -1,5 +1,5 @@
 @section('title', __('Contratos')) 
-<div class="cardPrin" style="height: 75vh; display: flex; flex-direction: column;">
+<div class="cardPrin" style="height: 90vh; display: flex; flex-direction: column;">
     <div class="cardPrin-header d-flex justify-content-between align-items-center" style="cursor: move;">
         <span>Contratos</span>
         <div class="d-flex align-items-center gap-2">
@@ -9,6 +9,12 @@
                     <span wire:click="$set('keyWord','')" class="bot botNegro botChico" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); cursor: pointer;">X</span>
                 @endif
             </div>
+            <button class="bot botAzul botChico" wire:click="imprimirAnieja"
+                wire:loading.attr="disabled" wire:target="imprimirAnieja" title="Imprimir Aniejamiento">
+                <span wire:loading.remove wire:target="imprimirAnieja">
+                    <i class="bi bi-printer"></i></span> Añejam.
+                <span wire:loading wire:target="imprimirAnieja">⏳</span>
+            </button>
             <button class="bot botVerde botChico" wire:click="create" title="Nuevo Contrato">
                 <i class="bi bi-file-earmark-plus"></i>
             </button>
@@ -22,17 +28,27 @@
         <div class="row g-3">
             @forelse($contratos as $row)
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm border-start border-4 border-primary">
+                    <div class="card h-100 shadow-sm border-4 border-primary">
                         <div class="card-body p-2">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="fw-bold">#{{ str_pad($row->id, 5, '0', STR_PAD_LEFT) }}</span>
-                                <span class="text-muted small"><i class="bi bi-calendar-event"></i> {{ Util::formatFecha($row->fechaIni, 'D/MMM/AA') }} al {{  Util::formatFecha($row->fechaFin,'D/MMM/AA') }}</span>
+                                <i class="bi bi-house"></i>
+                                <span class="fw-bold text-uppercase">{{ $row->Cuarto->casa->casa }}</span>
+                                <span class="badge bg-primary ms-1">{{ $row->Cuarto->cuarto }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <i class="bi bi-calendar-event"></i> {{ Util::formatFecha($row->fechaIni, 'D/MMM/AA') }} al {{ Util::formatFecha($row->fechaFin,'D/MMM/AA') }}
+                                <div class="d-flex gap-1">
+                                    <span class="badge {{ $row->aniejaPago['color'] }}" title="Añejamiento de Pago">
+                                        {{ $row->aniejaPago['label'] }}
+                                    </span>
+                                    <span class="badge {{ $row->aniejaAdeudo['color'] }}" title="Añejamiento de Adeudo">
+                                        {{ $row->aniejaAdeudo['label'] }}
+                                    </span>
+                                </div>
                             </div>
                             <div class="row g-2">
                                 <div class="col-6 small">
-                                    <i class="bi bi-house"></i>
-                                    <span class="fw-bold text-uppercase">{{ $row->Cuarto->casa->casa }}</span>
-                                    <span class="badge bg-primary ms-1">{{ $row->Cuarto->cuarto }}</span>
                                     <span class="text-muted d-block mt-1">Inquilino</span>
                                     <strong>{{ $row->Inquilino->inquilino }}</strong>
                                 </div>

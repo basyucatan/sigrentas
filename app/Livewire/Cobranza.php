@@ -176,6 +176,10 @@ class Cobranza extends Component
             $pago->delete();
         }
     }
+    public function imprimirAnieja()
+    {
+        return Contrato::imprimirAnieja();
+    }
     public function imprimirReporte()
     {
         $this->validate([

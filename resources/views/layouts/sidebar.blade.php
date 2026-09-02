@@ -1,10 +1,12 @@
 <nav class="navbar bg-body-tertiary fixed-top" style="font-size: 1.2rem;">
     <div class="container-fluid">
+        @auth
         <div class="d-flex align-items-center gap-2 flex-shrink-0">
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
         </div>
+        @endauth
         <div class="mx-auto">
             <a href="{{ url('/') }}">
                 <img src="{{ asset('img/logo.png') }}" style="width:40px; height:auto;" alt="Logo">

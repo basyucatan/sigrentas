@@ -78,8 +78,14 @@
                         </div>
                     </div>
                     <div class="mt-2 text-end">
+                        <button class="bot botAzul botChico" wire:click="imprimirAnieja"
+                            wire:loading.attr="disabled" wire:target="imprimirAnieja" title="Imprimir Aniejamiento">
+                            <span wire:loading.remove wire:target="imprimirAnieja">
+                                <i class="bi bi-printer"></i></span> Añejam.
+                            <span wire:loading wire:target="imprimirAnieja">⏳</span>
+                        </button>
                         <button class="bot botVerde botChico" wire:click="imprimirReporte"
-                            wire:loading.attr="disabled" wire:target="imprimirReporte" title="Imprimir nómina">
+                            wire:loading.attr="disabled" wire:target="imprimirReporte" title="Imprimir Reporte">
                             <span wire:loading.remove wire:target="imprimirReporte">
                                 <i class="bi bi-printer"></i></span> Reporte
                             <span wire:loading wire:target="imprimirReporte">⏳</span>

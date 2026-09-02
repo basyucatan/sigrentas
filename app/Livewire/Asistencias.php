@@ -64,7 +64,71 @@ public function quitarFoto()
         ->orderBy('id', 'desc')
         ->paginate(12);
 }
+#[Computed]
+public function penasSemanales()
+{
+    $idUsuario = $this->IdUser ?: Auth::id();
+    $inicioDosSemanas = Carbon::now()->subWeeks(2)->startOfWeek();
+    $finHoy = Carbon::now();
 
+    // 1. Obtener asistencias existentes en el rango
+    $asistencias = Asistencia::where('IdUser', $idUsuario)
+        ->whereBetween('fecha', [$inicioDosSemanas->format('Y-m-d'), $finHoy->format('Y-m-d')])
+        ->get()
+        ->keyBy('fecha');
+
+    $alertas = collect();
+
+    // 2. Recorrer día por día (Lunes a Viernes)
+    for ($date = $inicioDosSemanas->copy(); $date->lte($finHoy); $date->addDay()) {
+        if ($date->isWeekend()) {
+            continue;
+        }
+
+        $fechaStr = $date->format('Y-m-d');
+        $asistencia = $asistencias->get($fechaStr);
+
+        if (!$asistencia) {
+            // ALERTA MAYOR: Sin registro en el día
+            $alertas->push([
+                'fecha' => $fechaStr,
+                'tipo' => 'falta',
+                'titulo' => 'SIN REGISTRO',
+                'detalle' => 'Falta / Sin marcas',
+                'claseBadge' => 'bg-danger text-white'
+            ]);
+        } else {
+            // Evaluar penalizaciones registradas
+            $adic = $asistencia->adicionales;
+            if (is_array($adic)) {
+                if (isset($adic['penaEntradaId'])) {
+                    $alertas->push([
+                        'fecha' => $fechaStr,
+                        'tipo' => 'pena_ent',
+                        'titulo' => 'Pena Ent.',
+                        'detalle' => 'Entrada: ' . $asistencia->horaEnt,
+                        'claseBadge' => 'bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25'
+                    ]);
+                }
+                if (isset($adic['penaSalidaId'])) {
+                    $alertas->push([
+                        'fecha' => $fechaStr,
+                        'tipo' => 'pena_sal',
+                        'titulo' => 'Pena Sal.',
+                        'detalle' => 'Salida: ' . ($asistencia->horaSal !== '00:00:00' ? $asistencia->horaSal : '---'),
+                        'claseBadge' => 'bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25'
+                    ]);
+                }
+            }
+        }
+    }
+
+    // 3. Agrupar alertas por semana
+    return $alertas->sortByDesc('fecha')->groupBy(function ($item) {
+        $f = Carbon::parse($item['fecha']);
+        return "Semana " . $f->copy()->startOfWeek()->format('d/m') . " al " . $f->copy()->endOfWeek()->format('d/m');
+    });
+}
 public function render()
 {
     $userId = $this->IdUser ?: (auth()->id() ?? 0);
